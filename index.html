@@ -325,11 +325,22 @@ async function startCam() {
   stopCam();
   camStarting = true;
   camHint('Starting camera…');
+  // watchdog: iOS occasionally hangs a camera request forever — don't leave
+  // the overlay stuck; let the user tap to trigger a fresh attempt
+  setTimeout(() => {
+    if (token === camToken && camStarting) { camStarting = false; camHint('Tap to start the camera.'); }
+  }, 8000);
   try {
     const video = { width: { ideal: 1920 }, height: { ideal: 1080 } };
     if (lensIdx >= 0 && lenses[lensIdx]) video.deviceId = { exact: lenses[lensIdx].id };
     else video.facingMode = { ideal: 'environment' };
-    const s = await navigator.mediaDevices.getUserMedia({ video, audio: false });
+    let s;
+    try {
+      s = await navigator.mediaDevices.getUserMedia({ video, audio: false });
+    } catch (e1) {
+      // some iPhones refuse specific lenses/sizes — fall back to any camera at all
+      s = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    }
     if (token !== camToken) { s.getTracks().forEach(t => t.stop()); return; }
     stream = s;
     videoTrack = s.getVideoTracks()[0];
@@ -355,6 +366,8 @@ async function startCam() {
     const name = e && e.name ? e.name : '';
     camHint(name === 'NotAllowedError'
       ? 'Tap to start the camera.\nIf nothing happens: iPhone Settings → Apps → Safari → Camera → Allow, then reopen the app.'
+      : name === 'NotFoundError'
+      ? 'Your iPhone is hiding its cameras from this app.\n\n1. Settings → Screen Time → Content & Privacy Restrictions → Allowed Apps: Camera must be ON.\n2. Settings → Apps → Safari → Camera: set to Ask or Allow.\n3. Restart the iPhone, reopen this app, then tap here.'
       : 'Tap to start the camera' + (name ? ' (' + name + ')' : '') + '.');
   }
 }
@@ -454,6 +467,10 @@ $('camWrap').addEventListener('click', () => {
 document.addEventListener('touchend', () => {
   if (vid.srcObject && vid.paused) vid.play().catch(() => {});
 }, true);
+/* whenever real frames are flowing, never leave an overlay covering them */
+vid.addEventListener('playing',    () => { if (stream) camHint(''); });
+vid.addEventListener('loadeddata', () => { if (stream) camHint(''); });
+vid.addEventListener('timeupdate', () => { if (stream && !$('camHint').hidden && !camStarting) camHint(''); });
 
 /* triple-tap the title to see which cameras iOS exposes (for troubleshooting) */
 let dbgTaps = 0, dbgTimer = null;
