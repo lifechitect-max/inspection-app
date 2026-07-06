@@ -1,4 +1,4 @@
-# Inspection Camera 📷
+# Inspection Camera
 
 A home-inspection photo app: take a picture, speak a note, and it's automatically
 filed under **Defects** or **General Photos** based on what you say.
