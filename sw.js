@@ -1,4 +1,4 @@
-const CACHE = 'inspect-v5';
+const CACHE = 'inspect-v6';
 const ASSETS = ['./', 'index.html', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -13,10 +13,26 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Cache-first so the app opens instantly and works offline in the field;
-// falls through to the network (and refreshes the cache) when online.
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  const isDoc = e.request.mode === 'navigate' || e.request.destination === 'document';
+  if (isDoc) {
+    // network-first for the app page itself: updates arrive on the next open,
+    // cached copy keeps it working offline in the field
+    e.respondWith(
+      fetch(e.request).then(res => {
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy));
+        }
+        return res;
+      }).catch(() =>
+        caches.match(e.request).then(hit => hit || caches.match('index.html'))
+      )
+    );
+    return;
+  }
+  // cache-first for icons/manifest — they rarely change
   e.respondWith(
     caches.match(e.request).then(hit => {
       const net = fetch(e.request).then(res => {

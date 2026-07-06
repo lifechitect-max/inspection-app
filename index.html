@@ -45,6 +45,8 @@
   }
   #camTop h1 { font-size:17px; font-weight:700; letter-spacing:.3px; }
   #camTop h1 span { color:#F59E0B; }
+  #ver { font-size:11px; color:rgba(255,255,255,.45); font-weight:600; margin-left:6px; }
+  #addrLabel { font-size:12px; color:#F59E0B; margin-top:2px; font-weight:600; }
   #zoomChips {
     position:absolute; left:0; right:0; bottom:calc(env(safe-area-inset-bottom) + 128px);
     display:flex; justify-content:center; gap:10px; z-index:3; align-items:center;
@@ -141,8 +143,27 @@
   }
   #emptyMsg { grid-column:1/-1; text-align:center; color:#5B6B84; padding:48px 24px; font-size:15px; line-height:1.6; }
   #galleryFooter { padding:10px 16px calc(env(safe-area-inset-bottom) + 12px); display:flex; gap:12px; }
-  #exportBtn { flex:2; padding:15px 0; border-radius:14px; background:#F59E0B; color:#0B1220; font-size:16px; font-weight:800; }
-  #newInspBtn { flex:1; padding:15px 0; border-radius:14px; background:#1A2436; color:#F87171; font-size:14px; font-weight:700; }
+  #exportBtn { flex:1.2; padding:15px 0; border-radius:14px; background:#F59E0B; color:#0B1220; font-size:14px; font-weight:800; }
+  #newInspBtn { flex:0.8; padding:15px 0; border-radius:14px; background:#1A2436; color:#F87171; font-size:13px; font-weight:700; }
+  #saveAllBtn { flex:1.4; padding:15px 0; border-radius:14px; background:#1E3A8A; color:#fff; font-size:14px; font-weight:800; }
+
+  /* ---------- New-inspection address modal ---------- */
+  #addrModal { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:50; display:flex; align-items:center; justify-content:center; padding:24px; }
+  #addrModal[hidden] { display:none; }
+  #addrBox {
+    background:#131C2E; border:1px solid #253145; border-radius:16px; padding:20px;
+    width:100%; max-width:360px; display:flex; flex-direction:column; gap:12px;
+  }
+  #addrBox h3 { font-size:18px; }
+  #addrBox p { color:#93A3BC; font-size:14px; line-height:1.45; }
+  #addrInput {
+    background:#1A2436; border:2px solid #253145; border-radius:12px;
+    padding:12px 14px; color:#E5EAF2; font-size:16px; font-family:inherit;
+  }
+  #addrInput:focus { outline:none; border-color:#F59E0B; }
+  #addrBtns { display:flex; gap:10px; }
+  #addrSkip { flex:1; padding:13px 0; border-radius:12px; background:#1A2436; color:#93A3BC; font-weight:700; }
+  #addrStart { flex:2; padding:13px 0; border-radius:12px; background:#F59E0B; color:#0B1220; font-weight:800; }
 
   /* ---------- Viewer screen ---------- */
   #viewScreen { background:#000; z-index:10; }
@@ -193,7 +214,12 @@
     <div style="font-size:44px">📷</div>
     <p id="camHintMsg">Starting camera…</p>
   </div>
-  <div id="camTop"><h1><span>●</span> Inspection Camera</h1></div>
+  <div id="camTop">
+    <div>
+      <h1><span>●</span> Inspection Camera <small id="ver"></small></h1>
+      <div id="addrLabel"></div>
+    </div>
+  </div>
   <div id="zoomChips">
     <button class="chip" id="chipHalf" hidden>.5</button>
     <button class="chip sel" id="chipOne">1×</button>
@@ -238,8 +264,9 @@
   </div>
   <div id="grid"></div>
   <div id="galleryFooter">
-    <button id="newInspBtn">New Inspection</button>
-    <button id="exportBtn">⬇︎ Export All</button>
+    <button id="newInspBtn">New</button>
+    <button id="saveAllBtn">📱 Save to Phone</button>
+    <button id="exportBtn">⬇︎ ZIP</button>
   </div>
 </div>
 
@@ -261,11 +288,24 @@
   </div>
 </div>
 
+<div id="addrModal" hidden>
+  <div id="addrBox">
+    <h3>🏠 New Inspection</h3>
+    <p>Enter the property address. It labels this inspection — it appears on the camera screen, in every photo's file name, and on the export.</p>
+    <input id="addrInput" placeholder="123 Main St" autocomplete="off">
+    <div id="addrBtns">
+      <button id="addrSkip">Skip</button>
+      <button id="addrStart">Start Inspection</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
+const APP_VERSION = 'v6';
 
 /* ================= State ================= */
 let db = null;
@@ -470,7 +510,9 @@ document.addEventListener('touchend', () => {
 /* whenever real frames are flowing, never leave an overlay covering them */
 vid.addEventListener('playing',    () => { if (stream) camHint(''); });
 vid.addEventListener('loadeddata', () => { if (stream) camHint(''); });
-vid.addEventListener('timeupdate', () => { if (stream && !$('camHint').hidden && !camStarting) camHint(''); });
+setInterval(() => {
+  if (stream && vid.readyState >= 2 && !vid.paused && !$('camHint').hidden) camHint('');
+}, 400);
 
 /* triple-tap the title to see which cameras iOS exposes (for troubleshooting) */
 let dbgTaps = 0, dbgTimer = null;
@@ -480,7 +522,7 @@ $('camTop').addEventListener('click', async () => {
   dbgTimer = setTimeout(() => dbgTaps = 0, 900);
   if (dbgTaps < 3) return;
   dbgTaps = 0;
-  let msg = 'Cameras this iPhone shows to web apps:\n';
+  let msg = 'Inspection Camera ' + APP_VERSION + '\n\nCameras this iPhone shows to web apps:\n';
   try {
     (await navigator.mediaDevices.enumerateDevices())
       .filter(d => d.kind === 'videoinput')
@@ -668,17 +710,65 @@ $('tabDefects').onclick = () => { galleryTab = 'defect';  $('tabDefects').classL
 $('tabGeneral').onclick = () => { galleryTab = 'general'; $('tabGeneral').classList.add('sel'); $('tabDefects').classList.remove('sel'); renderGrid(); };
 
 $('propName').value = localStorage.getItem('propName') || '';
-$('propName').addEventListener('input', () => localStorage.setItem('propName', $('propName').value));
+$('propName').addEventListener('input', () => { localStorage.setItem('propName', $('propName').value); updateAddrLabel(); });
+
+/* --- property address: shown on camera, asked for at each new inspection --- */
+function updateAddrLabel() {
+  $('addrLabel').textContent = (localStorage.getItem('propName') || '').trim();
+}
+function showAddrModal() {
+  $('addrInput').value = localStorage.getItem('propName') || '';
+  $('addrModal').hidden = false;
+  setTimeout(() => $('addrInput').focus(), 100);
+}
+function closeAddrModal(save) {
+  if (save) {
+    const v = $('addrInput').value.trim();
+    localStorage.setItem('propName', v);
+    $('propName').value = v;
+    updateAddrLabel();
+  }
+  $('addrModal').hidden = true;
+}
+$('addrStart').onclick = () => closeAddrModal(true);
+$('addrSkip').onclick  = () => closeAddrModal(false);
+$('addrInput').addEventListener('keydown', e => { if (e.key === 'Enter') closeAddrModal(true); });
 
 $('newInspBtn').onclick = async () => {
-  if (!photos.length) { toast('Nothing to clear'); return; }
-  if (!confirm(`Delete all ${photos.length} photos and start a new inspection?\n\nExport first if you haven't!`)) return;
-  await dbClear();
-  photos = [];
+  if (photos.length) {
+    if (!confirm(`Delete all ${photos.length} photos and start a new inspection?\n\nSave to Phone or Export first if you haven't!`)) return;
+    await dbClear();
+    photos = [];
+  }
   localStorage.removeItem('propName');
   $('propName').value = '';
+  updateAddrLabel();
   updateCounts(); renderGrid();
-  toast('New inspection started');
+  showAddrModal();
+};
+
+/* --- send every photo to the iPhone Photos app via the share sheet --- */
+$('saveAllBtn').onclick = async () => {
+  if (!photos.length) { toast('No photos yet', true); return; }
+  const prop = sanitize($('propName').value) || 'Inspection';
+  const files = [];
+  for (const [label, cat] of [['Defect', 'defect'], ['General', 'general']]) {
+    const list = photos.filter(p => p.cat === cat).sort((a, b) => a.ts - b.ts);
+    let i = 1;
+    for (const p of list) {
+      files.push(new File([p.blob],
+        `${prop} - ${label} ${String(i++).padStart(3, '0')} - ${sanitize(p.note) || 'photo'}.jpg`,
+        { type: 'image/jpeg' }));
+    }
+  }
+  if (navigator.canShare && navigator.canShare({ files })) {
+    try {
+      await navigator.share({ files });
+      toast('Tip: “Save Images” puts them in your Photos app');
+    } catch (e) { /* user closed the share sheet */ }
+  } else {
+    toast('Too many photos to share at once — use ⬇︎ ZIP instead', true);
+  }
 };
 
 /* ================= Viewer (pinch zoom) ================= */
@@ -877,14 +967,17 @@ $('exportBtn').onclick = async () => {
   } catch (e) {
     toast('Export failed: ' + e.message, true);
   }
-  $('exportBtn').textContent = '⬇︎ Export All';
+  $('exportBtn').textContent = '⬇︎ ZIP';
 };
 
 /* ================= Boot ================= */
 (async function init() {
+  $('ver').textContent = APP_VERSION;
   await openDB();
   photos = await dbAll();
   updateCounts();
+  updateAddrLabel();
+  if (!photos.length && !(localStorage.getItem('propName') || '').trim()) showAddrModal();
   startCam();
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
