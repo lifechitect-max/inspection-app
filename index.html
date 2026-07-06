@@ -159,6 +159,10 @@
   #exportBtn { flex:1.2; padding:15px 0; border-radius:14px; background:#F59E0B; color:#0B1220; font-size:14px; font-weight:800; }
   #newInspBtn { flex:0.8; padding:15px 0; border-radius:14px; background:#1A2436; color:#F87171; font-size:13px; font-weight:700; }
   #saveAllBtn { flex:1.4; padding:15px 0; border-radius:14px; background:#1E3A8A; color:#fff; font-size:14px; font-weight:800; }
+  /* Style for Drive backup button to match other footer buttons */
+  #driveBackupBtn { flex:1.2; padding:15px 0; border-radius:14px; background:#1E3A8A; color:#fff; font-size:14px; font-weight:800; }
+  /* Style for the Drive sign‑in button; unify with Jobs button using golden accent */
+  #driveBtn.topBtn { color:#FBBF24; border-color:rgba(251,191,36,.3); }
 
   /* ---------- New-inspection address modal ---------- */
   #addrModal { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:50; display:flex; align-items:center; justify-content:center; padding:24px; }
@@ -477,13 +481,17 @@
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
-const APP_VERSION = 'v13';
+const APP_VERSION = 'v14';
 // Google Drive OAuth client ID. Obtained from Google Cloud console for this app.
 const CLIENT_ID = '785011600208-7n60n10vpb9drt3fnur31ap111rgjkhh.apps.googleusercontent.com';
 // Drive OAuth state: access token and connection flag
 let driveAccessToken = null;
 let driveConnected = false;
 let tokenClient = null;
+// IDs for the base Drive folders. These are lazily populated by ensureBaseFolders()
+// Capturing these globally allows reuse across backups during a single session.
+let driveBaseFolderId = null;     // "Captain Home Inspector" folder
+let drivePhotosFolderId = null;   // "Inspection Photos" subfolder within Captain Home Inspector
 
 /* ================= Data ================= */
 let db = null;
@@ -726,7 +734,8 @@ async function startCam() {
     if (token === camToken && camStarting) { camStarting = false; camHint('Tap to start the camera.'); }
   }, 8000);
   try {
-    const video = { width: { ideal: 1920 }, height: { ideal: 1080 } };
+    // request the highest available resolution; iOS Safari will cap to the device max
+    const video = { width: { ideal: 4032 }, height: { ideal: 3024 } };
     if (lensIdx >= 0 && lenses[lensIdx]) video.deviceId = { exact: lenses[lensIdx].id };
     else video.facingMode = { ideal: 'environment' };
     let s;
@@ -951,7 +960,7 @@ $('shutter').onclick = () => {
       savePhotoRecord(pending, false);
       pending = null;
     }
-  }, 'image/jpeg', 0.88);
+  }, 'image/jpeg', 1.0);
 };
 
 /* ================= Note screen ================= */
@@ -1433,6 +1442,46 @@ async function createDriveFolder(name, parentId = null) {
   const data = await res.json();
   return data.id;
 }
+/**
+ * Find a folder in Google Drive by name and optional parent ID.
+ * Returns the file object (with id and name) or null if not found.
+ */
+async function findDriveFolder(name, parentId = null) {
+  const queryParts = [
+    `name = '${name.replace(/'/g, "\\'")}'`,
+    `mimeType = 'application/vnd.google-apps.folder'`,
+    `trashed = false`
+  ];
+  if (parentId) queryParts.push(`'${parentId}' in parents`);
+  const q = queryParts.join(' and ');
+  const res = await fetch('https://www.googleapis.com/drive/v3/files?q=' + encodeURIComponent(q) + '&fields=files(id,name)', {
+    headers: { 'Authorization': 'Bearer ' + driveAccessToken }
+  });
+  const json = await res.json();
+  return json.files && json.files.length ? json.files[0] : null;
+}
+/**
+ * Ensure the "Captain Home Inspector" and "Inspection Photos" folders exist in Drive.
+ * Saves their IDs in driveBaseFolderId and drivePhotosFolderId. Creates them if missing.
+ */
+async function ensureBaseFolders() {
+  if (!driveBaseFolderId) {
+    let folder = await findDriveFolder('Captain Home Inspector');
+    if (!folder) {
+      const id = await createDriveFolder('Captain Home Inspector');
+      folder = { id, name: 'Captain Home Inspector' };
+    }
+    driveBaseFolderId = folder.id;
+  }
+  if (!drivePhotosFolderId) {
+    let folder = await findDriveFolder('Inspection Photos', driveBaseFolderId);
+    if (!folder) {
+      const id = await createDriveFolder('Inspection Photos', driveBaseFolderId);
+      folder = { id, name: 'Inspection Photos' };
+    }
+    drivePhotosFolderId = folder.id;
+  }
+}
 // Upload a Blob to Google Drive under a specific parent folder.
 async function uploadBlobToDrive(blob, fileName, parentId) {
   const metadata = { name: fileName, parents: [parentId] };
@@ -1455,29 +1504,64 @@ async function backupToDrive() {
       toast('Please connect to Drive first', true);
       return;
     }
-    // Determine property name and date to name folders
-    const prop = (activeInspection && activeInspection.address ? activeInspection.address : (localStorage.getItem('propName') || 'Inspection')).trim() || 'Inspection';
-    const dateStr = new Date().toISOString().slice(0, 10);
-    const mainFolderId = await createDriveFolder(`${prop} - ${dateStr}`);
-    const defectFolderId = await createDriveFolder('Defects', mainFolderId);
-    const generalFolderId = await createDriveFolder('General Photos', mainFolderId);
-    let iDef = 1, iGen = 1;
+    if (!activeInspection) {
+      toast('No active job to back up', true);
+      return;
+    }
+    // Ensure base folders (Captain Home Inspector / Inspection Photos) exist
+    await ensureBaseFolders();
+    // Determine or create folder for this inspection
+    const job = activeInspection;
+    const prop = (job.address || 'Inspection').trim() || 'Inspection';
+    const dateStr = new Date(job.createdAt || Date.now()).toISOString().slice(0, 10);
+    const jobFolderName = `${prop} - ${dateStr}`;
+    if (!job.driveFolderId) {
+      let folder = await findDriveFolder(jobFolderName, drivePhotosFolderId);
+      if (!folder) {
+        const id = await createDriveFolder(jobFolderName, drivePhotosFolderId);
+        folder = { id, name: jobFolderName };
+      }
+      job.driveFolderId = folder.id;
+    }
+    // Ensure subfolders for defects and general photos
+    if (!job.driveDefectsFolderId) {
+      let f = await findDriveFolder('Defects', job.driveFolderId);
+      if (!f) {
+        const id = await createDriveFolder('Defects', job.driveFolderId);
+        f = { id, name: 'Defects' };
+      }
+      job.driveDefectsFolderId = f.id;
+    }
+    if (!job.driveGeneralFolderId) {
+      let f = await findDriveFolder('General Photos', job.driveFolderId);
+      if (!f) {
+        const id = await createDriveFolder('General Photos', job.driveFolderId);
+        f = { id, name: 'General Photos' };
+      }
+      job.driveGeneralFolderId = f.id;
+    }
+    // Determine starting counters based on previously backed up photos
+    let defCount = photos.filter(p => p.cat === 'defect' && p.backedUp).length;
+    let genCount = photos.filter(p => p.cat !== 'defect' && p.backedUp).length;
     for (const p of photos) {
-      const idx = p.cat === 'defect' ? iDef : iGen;
-      // sanitize note or fallback label
+      if (p.backedUp) continue;
+      const idx = p.cat === 'defect' ? ++defCount : ++genCount;
+      // sanitize the note for filename; fallback based on category
       const notePart = (p.note || (p.cat === 'defect' ? 'defect' : 'general')).replace(/[^\w\s-]/g, '').trim() || (p.cat === 'defect' ? 'defect' : 'general');
       const fname = `${String(idx).padStart(3, '0')} - ${notePart}.jpg`;
-      const folderId = p.cat === 'defect' ? defectFolderId : generalFolderId;
+      const folderId = p.cat === 'defect' ? job.driveDefectsFolderId : job.driveGeneralFolderId;
       await uploadBlobToDrive(p.blob, fname, folderId);
-      if (p.cat === 'defect') iDef++; else iGen++;
+      p.backedUp = true;
+      await dbPutPhoto(p).catch(() => {});
     }
-    // flag inspection as backed up
-    if (activeInspection) {
-      activeInspection.backedUp = true;
-      await saveInspection().catch(() => {});
+    // mark job as backed up if all photos are backed up
+    if (photos.every(p => p.backedUp)) {
+      job.backedUp = true;
     }
-    toast('Backup to Drive complete');
+    await saveInspection().catch(() => {});
+    toast('Drive backup complete');
   } catch (e) {
+    console.error('Drive backup error', e);
     toast('Drive backup failed: ' + (e && e.message ? e.message : e), true);
   }
 }

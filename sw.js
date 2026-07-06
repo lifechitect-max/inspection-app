@@ -1,4 +1,4 @@
-const CACHE = 'inspect-v13';
+const CACHE = 'inspect-v14';
 const ASSETS = ['./', 'index.html', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
