@@ -1,0 +1,40 @@
+*** Begin Patch
+*** Update File: index.html
+@@
+-const APP_VERSION = 'v7';
++const APP_VERSION = 'v8';
+@@
+-function camHint(msg) {
+-  $('camHint').hidden = !msg;
+-  if (msg) $('camHintMsg').textContent = msg;
+-}
++/**
++ * Show or hide the camera hint overlay. Safari’s handling of the `hidden`
++ * attribute can be unreliable, especially when combined with flexbox
++ * layouts. Instead of toggling the `hidden` attribute, explicitly
++ * control the overlay’s display style.
++ */
++function camHint(msg) {
++  const hint = $('camHint');
++  const msgEl = $('camHintMsg');
++  if (!msg) {
++    hint.style.display = 'none';
++    if (msgEl) msgEl.textContent = '';
++  } else {
++    hint.style.display = 'flex';
++    if (msgEl) msgEl.textContent = msg;
++  }
++}
+@@
+-setInterval(() => {
+-  if (stream && vid.readyState >= 2 && !vid.paused && !$('camHint').hidden) camHint('');
+-}, 400);
++setInterval(() => {
++  const hintVisible = $('camHint').style.display !== 'none';
++  if (stream && vid.readyState >= 2 && !vid.paused && hintVisible) camHint('');
++}, 400);
+*** Update File: sw.js
+@@
+-const CACHE = 'inspect-v7';
++const CACHE = 'inspect-v8';
+*** End Patch

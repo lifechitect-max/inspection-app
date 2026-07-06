@@ -314,7 +314,7 @@
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
-const APP_VERSION = 'v7';
+const APP_VERSION = 'v8';
 
 /* ================= State ================= */
 let db = null;
@@ -363,9 +363,28 @@ let lensIdx = -1;                 // -1 = default back camera
 const vid = $('vid');
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
+/**
+ * Show or hide the camera hint overlay. Safari’s handling of the `hidden`
+ * attribute can be unreliable, especially when combined with flexbox
+ * layouts. Instead of toggling the `hidden` attribute, explicitly
+ * control the overlay’s display style. When a message is provided we
+ * ensure the hint container is visible and update its text; when the
+ * message is falsy we hide the overlay completely and clear any stale
+ * text. This prevents the "Starting camera…" overlay from getting
+ * stuck on screen if camera initialization is interrupted.
+ */
 function camHint(msg) {
-  $('camHint').hidden = !msg;
-  if (msg) $('camHintMsg').textContent = msg;
+  const hint = $('camHint');
+  const msgEl = $('camHintMsg');
+  if (!msg) {
+    // Hide the overlay and clear previous text
+    hint.style.display = 'none';
+    if (msgEl) msgEl.textContent = '';
+  } else {
+    // Show the overlay and update the message
+    hint.style.display = 'flex';
+    if (msgEl) msgEl.textContent = msg;
+  }
 }
 const lensBase = () => (lensIdx >= 0 && lenses[lensIdx] ? lenses[lensIdx].base : 1);
 
@@ -520,7 +539,10 @@ document.addEventListener('touchend', () => {
 vid.addEventListener('playing',    () => { if (stream) camHint(''); });
 vid.addEventListener('loadeddata', () => { if (stream) camHint(''); });
 setInterval(() => {
-  if (stream && vid.readyState >= 2 && !vid.paused && !$('camHint').hidden) camHint('');
+  // If frames are flowing and the hint is still visible, hide it. Using
+  // style.display instead of the `hidden` attribute to align with camHint().
+  const hintVisible = $('camHint').style.display !== 'none';
+  if (stream && vid.readyState >= 2 && !vid.paused && hintVisible) camHint('');
 }, 400);
 
 /* triple-tap the title to see which cameras iOS exposes (for troubleshooting) */
