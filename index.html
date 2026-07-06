@@ -31,12 +31,12 @@
   #camWrap { position:absolute; inset:0; overflow:hidden; }
   #vid { width:100%; height:100%; object-fit:cover; transform-origin:center center; }
   #flash { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; transition:opacity .25s; }
-  #camError {
-    position:absolute; inset:0; display:flex; flex-direction:column; gap:16px;
+  #camHint {
+    position:absolute; inset:0; display:flex; flex-direction:column; gap:12px;
     align-items:center; justify-content:center; text-align:center; padding:32px;
-    background:#0B1220; z-index:2; /* below the top/bottom bars so Photos stays reachable */
+    background:rgba(11,18,32,.55); z-index:2; pointer-events:none;
   }
-  #camError p { color:#93A3BC; font-size:16px; line-height:1.5; max-width:320px; }
+  #camHint p { color:#E5EAF2; font-size:16px; line-height:1.5; max-width:320px; white-space:pre-line; }
   #camTop {
     position:absolute; top:0; left:0; right:0; z-index:3;
     padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;
@@ -45,18 +45,16 @@
   }
   #camTop h1 { font-size:17px; font-weight:700; letter-spacing:.3px; }
   #camTop h1 span { color:#F59E0B; }
-  #zoomRow {
+  #zoomChips {
     position:absolute; left:0; right:0; bottom:calc(env(safe-area-inset-bottom) + 128px);
-    display:flex; justify-content:center; gap:14px; z-index:3; align-items:center;
+    display:flex; justify-content:center; gap:10px; z-index:3; align-items:center;
   }
-  .zoomBtn {
-    width:44px; height:44px; border-radius:50%; font-size:24px; font-weight:600;
-    background:rgba(0,0,0,.45); color:#fff; backdrop-filter:blur(6px);
+  .chip {
+    min-width:46px; height:46px; padding:0 12px; border-radius:23px;
+    background:rgba(0,0,0,.5); color:#fff; font-size:14px; font-weight:700;
+    backdrop-filter:blur(6px); border:1.5px solid transparent; transition:transform .15s;
   }
-  #zoomLabel {
-    min-width:64px; text-align:center; font-size:15px; font-weight:700;
-    background:rgba(0,0,0,.45); border-radius:22px; padding:10px 0; backdrop-filter:blur(6px);
-  }
+  .chip.sel { color:#F59E0B; border-color:rgba(245,158,11,.6); transform:scale(1.12); }
   #camBottom {
     position:absolute; left:0; right:0; bottom:0; z-index:3;
     padding:14px 24px calc(env(safe-area-inset-bottom) + 18px);
@@ -74,13 +72,7 @@
     color:#fff; font-size:13px; font-weight:600; line-height:1.5; backdrop-filter:blur(6px);
   }
   #galleryBtn .d { color:#F87171; } #galleryBtn .g { color:#60A5FA; }
-  #lensCol { width:92px; display:flex; gap:8px; justify-content:center; }
-  .lensBtn {
-    width:42px; height:42px; border-radius:50%; font-size:13px; font-weight:700;
-    background:rgba(0,0,0,.45); color:#fff; backdrop-filter:blur(6px);
-    border:1.5px solid transparent;
-  }
-  .lensBtn.sel { color:#F59E0B; border-color:#F59E0B; }
+  #camRightSpace { width:92px; }
 
   /* ---------- Note screen ---------- */
   #noteScreen { background:#0B1220; }
@@ -197,24 +189,20 @@
     <video id="vid" autoplay playsinline muted></video>
     <div id="flash"></div>
   </div>
-  <div id="camError" hidden>
-    <div style="font-size:52px">📷</div>
-    <p id="camErrorMsg">Camera access is needed to take inspection photos.</p>
-    <button class="bigBtn" id="retryCamBtn">Enable Camera</button>
+  <div id="camHint">
+    <div style="font-size:44px">📷</div>
+    <p id="camHintMsg">Starting camera…</p>
   </div>
   <div id="camTop"><h1><span>●</span> Inspection Camera</h1></div>
-  <div id="zoomRow">
-    <button class="zoomBtn" id="zoomOut">−</button>
-    <div id="zoomLabel">1.0×</div>
-    <button class="zoomBtn" id="zoomIn">+</button>
+  <div id="zoomChips">
+    <button class="chip" id="chipHalf" hidden>.5</button>
+    <button class="chip sel" id="chipOne">1×</button>
+    <button class="chip" id="chipThree">3</button>
   </div>
   <div id="camBottom">
     <button id="galleryBtn">Photos<br><span class="d">D: 0</span> · <span class="g">G: 0</span></button>
     <button id="shutter" aria-label="Take photo"></button>
-    <div id="lensCol">
-      <button class="lensBtn" id="lensUltra" hidden>.5×</button>
-      <button class="lensBtn sel" id="lensWide" hidden>1×</button>
-    </div>
+    <div id="camRightSpace"></div>
   </div>
 </div>
 
@@ -317,27 +305,37 @@ function toast(msg, isErr) {
 }
 
 /* ================= Camera ================= */
-let stream = null, videoTrack = null;
-let zoom = 1, minZoom = 1, maxZoom = 6, nativeZoom = false;
-let camToken = 0;                       // invalidates stale startCam calls racing each other
-let lens = 'wide';                      // 'wide' (1x) or 'ultra' (0.5x back camera)
-let lensIds = { wide: null, ultra: null };
+let stream = null, videoTrack = null, capsZoom = null;
+let camToken = 0, camStarting = false;
+let effZoom = 1;                  // zoom the user sees (0.5 = ultra-wide view)
+let digitalZoom = 1;              // extra CSS/crop zoom on top of native zoom
+let lenses = [];                  // usable back lenses, sorted by base zoom
+let lensIdx = -1;                 // -1 = default back camera
 const vid = $('vid');
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+function camHint(msg) {
+  $('camHint').hidden = !msg;
+  if (msg) $('camHintMsg').textContent = msg;
+}
+const lensBase = () => (lensIdx >= 0 && lenses[lensIdx] ? lenses[lensIdx].base : 1);
 
 async function startCam() {
   const token = ++camToken;
   stopCam();
+  camStarting = true;
+  camHint('Starting camera…');
   try {
     const video = { width: { ideal: 1920 }, height: { ideal: 1080 } };
-    if (lensIds[lens]) video.deviceId = { exact: lensIds[lens] };
+    if (lensIdx >= 0 && lenses[lensIdx]) video.deviceId = { exact: lenses[lensIdx].id };
     else video.facingMode = { ideal: 'environment' };
     const s = await navigator.mediaDevices.getUserMedia({ video, audio: false });
     if (token !== camToken) { s.getTracks().forEach(t => t.stop()); return; }
     stream = s;
     videoTrack = s.getVideoTracks()[0];
     vid.srcObject = s;
-    // iOS can reject play() (e.g. Low Power Mode) while the stream itself is
-    // fine — never treat that as a camera failure; a later tap retries it.
+    // iOS can block the preview from auto-playing (Low Power Mode etc.) even
+    // though the camera works — play() failure is never fatal, any tap retries.
     vid.play().catch(() => {});
     await new Promise(res => {
       if (vid.readyState >= 2) return res();
@@ -346,99 +344,163 @@ async function startCam() {
     });
     if (token !== camToken) return;
     const caps = videoTrack.getCapabilities ? videoTrack.getCapabilities() : {};
-    if (caps.zoom && typeof caps.zoom.max === 'number') {
-      nativeZoom = true;
-      minZoom = caps.zoom.min || 1;
-      maxZoom = caps.zoom.max;
-    } else {
-      nativeZoom = false; minZoom = 1; maxZoom = 6;
-    }
-    setZoom(Math.max(1, minZoom));
-    $('camError').hidden = true;
+    capsZoom = (caps.zoom && typeof caps.zoom.max === 'number') ? caps.zoom : null;
+    camStarting = false;
+    camHint('');
+    applyZoom();
     discoverLenses();
   } catch (e) {
     if (token !== camToken) return;
-    $('camError').hidden = false;
+    camStarting = false;
     const name = e && e.name ? e.name : '';
-    $('camErrorMsg').textContent =
-      (name === 'NotAllowedError'
-        ? 'Camera permission was not granted.'
-        : 'The camera did not start' + (name ? ' (' + name + ')' : '') + '.') +
-      ' Tap below to try again. If it keeps failing, fully close the app (swipe it away) and reopen it, ' +
-      'or check iPhone Settings → Apps → Safari → Camera → Allow.';
+    camHint(name === 'NotAllowedError'
+      ? 'Tap to start the camera.\nIf nothing happens: iPhone Settings → Apps → Safari → Camera → Allow, then reopen the app.'
+      : 'Tap to start the camera' + (name ? ' (' + name + ')' : '') + '.');
   }
 }
 function stopCam() {
-  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; videoTrack = null; }
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; videoTrack = null; capsZoom = null; }
 }
 
-/* once permission is granted, look for the 0.5x ultra-wide back camera */
+/* Find the back lenses once permission is granted. Prefer Apple's combined
+   multi-lens camera (it zooms below 1x natively, switching glass seamlessly);
+   otherwise switch physical lenses (Ultra Wide / Wide / Telephoto) manually. */
+let lensesProbed = false;
 async function discoverLenses() {
-  if (lensIds.ultra) return;
+  if (lensesProbed) return;
+  lensesProbed = true;
   try {
-    const cams = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
-    const back = cams.filter(d => /back|rear|environment/i.test(d.label));
-    const ultra = back.find(d => /ultra/i.test(d.label));
-    const wide = back.find(d => !/ultra|tele|triple|dual/i.test(d.label)) || back[0];
-    if (ultra && wide && ultra.deviceId !== wide.deviceId) {
-      lensIds = { wide: wide.deviceId, ultra: ultra.deviceId };
-      $('lensWide').hidden = false;
-      $('lensUltra').hidden = false;
+    const cams = (await navigator.mediaDevices.enumerateDevices())
+      .filter(d => d.kind === 'videoinput' && !/front/i.test(d.label));
+    const backish = cams.filter(d => /back|rear|environment/i.test(d.label));
+    const pool = backish.length ? backish : cams;
+    const virt  = pool.find(d => /dual|triple/i.test(d.label));
+    const ultra = pool.find(d => /ultra/i.test(d.label));
+    const tele  = pool.find(d => /tele/i.test(d.label));
+    const wide  = pool.find(d => !/ultra|tele|dual|triple/i.test(d.label));
+    if (virt) {
+      lenses = [{ id: virt.deviceId, label: virt.label, base: 1 }];
+      lensIdx = 0;
+      await startCam();
+      if (capsZoom && capsZoom.min < 1) { updateChips(); return; }
+      lenses = []; lensIdx = -1;   // combined camera can't go below 1x — fall back
     }
+    const found = [];
+    if (ultra) found.push({ id: ultra.deviceId, label: ultra.label, base: 0.5 });
+    if (wide)  found.push({ id: wide.deviceId,  label: wide.label,  base: 1 });
+    if (tele)  found.push({ id: tele.deviceId,  label: tele.label,  base: 3 });
+    if (found.length > 1) {
+      lenses = found;
+      lensIdx = found.findIndex(l => l.base === 1);
+      if (lensIdx < 0) lensIdx = 0;
+      await startCam();
+    }
+    updateChips();
   } catch (e) { /* lens picker is optional */ }
 }
-function setLens(l) {
-  if (lens === l || !lensIds[l]) return;
-  lens = l;
-  $('lensWide').classList.toggle('sel', l === 'wide');
-  $('lensUltra').classList.toggle('sel', l === 'ultra');
-  startCam();
-}
-$('lensWide').onclick  = () => setLens('wide');
-$('lensUltra').onclick = () => setLens('ultra');
 
-function setZoom(z) {
-  zoom = Math.min(maxZoom, Math.max(minZoom, z));
-  if (nativeZoom && videoTrack) {
-    videoTrack.applyConstraints({ advanced: [{ zoom }] }).catch(() => {});
-    vid.style.transform = '';
-  } else {
-    vid.style.transform = zoom > 1 ? `scale(${zoom})` : '';
-  }
-  const eff = (lens === 'ultra' ? 0.5 : 1) * zoom;   // what the user actually sees
-  $('zoomLabel').textContent = (eff < 1 ? ('' + eff).slice(0, 4) : eff.toFixed(1)) + '×';
+function canHalf() {
+  return lenses.some(l => l.base === 0.5) || !!(capsZoom && capsZoom.min < 1);
 }
-$('zoomIn').onclick  = () => setZoom(zoom + 0.5);
-$('zoomOut').onclick = () => setZoom(zoom - 0.5);
-$('retryCamBtn').onclick = () => { vid.play().catch(() => {}); startCam(); };
-/* safety net: if the preview was blocked from auto-playing, resume on any tap */
+function minEff() { return canHalf() ? 0.5 : 1; }
+function maxEff() {
+  const topBase = lenses.length ? lenses[lenses.length - 1].base : 1;
+  return Math.max(topBase * (capsZoom ? capsZoom.max : 6), 6);
+}
+
+function setEff(e, allowLensSwitch = true) {
+  effZoom = clamp(e, minEff(), maxEff());
+  if (allowLensSwitch && lenses.length > 1 && !camStarting) {
+    let best = 0;
+    for (let i = 0; i < lenses.length; i++) if (lenses[i].base <= effZoom + 0.001) best = i;
+    if (best !== lensIdx) { lensIdx = best; startCam(); return; }
+  }
+  applyZoom();
+}
+function applyZoom() {
+  const inner = effZoom / lensBase();
+  let digital = inner;
+  if (videoTrack && capsZoom) {
+    const native = clamp(inner, capsZoom.min, capsZoom.max);
+    videoTrack.applyConstraints({ advanced: [{ zoom: native }] }).catch(() => {});
+    digital = inner / native;
+  }
+  digitalZoom = Math.max(1, digital);
+  vid.style.transform = digitalZoom > 1.001 ? `scale(${digitalZoom})` : '';
+  updateChips();
+}
+function fmtZoom(z) {
+  const r = Math.round(z * 10) / 10;
+  return r < 1 ? ('' + r).replace('0.', '.') : ('' + r).replace(/\.0$/, '');
+}
+function updateChips() {
+  $('chipHalf').hidden = !canHalf();
+  const active = effZoom < 0.95 ? 'chipHalf' : effZoom < 2.95 ? 'chipOne' : 'chipThree';
+  for (const [id, label] of [['chipHalf', '.5'], ['chipOne', '1×'], ['chipThree', '3']]) {
+    const b = $(id);
+    b.classList.toggle('sel', id === active);
+    b.textContent = id === active ? fmtZoom(effZoom) + '×' : label;
+  }
+}
+$('chipHalf').onclick  = () => setEff(0.5);
+$('chipOne').onclick   = () => setEff(1);
+$('chipThree').onclick = () => setEff(3);
+
+/* tap the viewfinder: start the camera if it isn't running, resume if paused */
+$('camWrap').addEventListener('click', () => {
+  if (!stream && !camStarting) startCam();
+  else if (vid.paused) vid.play().catch(() => {});
+});
 document.addEventListener('touchend', () => {
   if (vid.srcObject && vid.paused) vid.play().catch(() => {});
 }, true);
 
-/* pinch to zoom on the live camera */
-let pinchDist = 0, pinchZoomStart = 1;
+/* triple-tap the title to see which cameras iOS exposes (for troubleshooting) */
+let dbgTaps = 0, dbgTimer = null;
+$('camTop').addEventListener('click', async () => {
+  dbgTaps++;
+  clearTimeout(dbgTimer);
+  dbgTimer = setTimeout(() => dbgTaps = 0, 900);
+  if (dbgTaps < 3) return;
+  dbgTaps = 0;
+  let msg = 'Cameras this iPhone shows to web apps:\n';
+  try {
+    (await navigator.mediaDevices.enumerateDevices())
+      .filter(d => d.kind === 'videoinput')
+      .forEach(d => msg += '• ' + (d.label || '(name hidden)') + '\n');
+  } catch (e) { msg += 'error: ' + e; }
+  msg += '\nActive lens zoom range: ' + (capsZoom ? capsZoom.min + ' to ' + capsZoom.max : 'not supported');
+  msg += '\nCurrent zoom: ' + fmtZoom(effZoom) + '×';
+  alert(msg);
+});
+
+/* pinch to zoom on the live camera — like the native camera app */
+let pinchDist = 0, pinchEffStart = 1;
 const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
 $('camWrap').addEventListener('touchstart', e => {
-  if (e.touches.length === 2) { pinchDist = dist(e.touches); pinchZoomStart = zoom; }
+  if (e.touches.length === 2) { pinchDist = dist(e.touches); pinchEffStart = effZoom; }
 });
 $('camWrap').addEventListener('touchmove', e => {
   if (e.touches.length === 2 && pinchDist > 0) {
     e.preventDefault();
-    setZoom(pinchZoomStart * dist(e.touches) / pinchDist);
+    setEff(pinchEffStart * dist(e.touches) / pinchDist);
   }
 }, { passive: false });
 
 /* capture */
 $('shutter').onclick = () => {
-  if (!stream || !vid.videoWidth) { toast('Camera not ready', true); return; }
+  if (!stream || !vid.videoWidth) {
+    toast('Camera not ready', true);
+    if (!camStarting) startCam();
+    return;
+  }
   const f = $('flash');
   f.style.opacity = .8; setTimeout(() => f.style.opacity = 0, 120);
 
   const vw = vid.videoWidth, vh = vid.videoHeight;
   let sx = 0, sy = 0, sw = vw, sh = vh;
-  if (!nativeZoom && zoom > 1) {            // digital zoom: crop the center
-    sw = vw / zoom; sh = vh / zoom;
+  if (digitalZoom > 1.001) {                // digital zoom: crop the center to match
+    sw = vw / digitalZoom; sh = vh / digitalZoom;
     sx = (vw - sw) / 2; sy = (vh - sh) / 2;
   }
   const c = document.createElement('canvas');
