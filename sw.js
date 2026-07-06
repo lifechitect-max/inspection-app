@@ -1,4 +1,3 @@
-// Updated cache name to force browsers to fetch the new version when v13 is deployed.
 const CACHE = 'inspect-v13';
 const ASSETS = ['./', 'index.html', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png'];
 
