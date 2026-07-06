@@ -12,6 +12,8 @@
 <link rel="icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <title>Inspection Camera</title>
+<!-- Google Identity Services for Drive OAuth -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { height:100%; overscroll-behavior:none; }
@@ -127,9 +129,7 @@
     color:#93A3BC; font-size:13px; line-height:1.3;
   }
   #autoSaveRow input { width:20px; height:20px; accent-color:#F59E0B; flex-shrink:0; }
-  #autoSaveRow b { color:#E5EAF2; font-weight:800; display:block; margin-bottom:2px; }
-  #autoSaveRow small { color:#5B6B84; font-size:12px; line-height:1.3; display:block; }
-  #tabs { display:flex; gap:10px; padding:12px 16px 8px; }
+  #tabs { display:flex; gap:10px; padding:12px 16px; }
   .tab {
     flex:1; padding:12px 0; border-radius:12px; font-size:15px; font-weight:800;
     background:#1A2436; color:#93A3BC;
@@ -149,10 +149,6 @@
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   #emptyMsg { grid-column:1/-1; text-align:center; color:#5B6B84; padding:48px 24px; font-size:15px; line-height:1.6; }
-  #categorySaveRow { display:flex; gap:10px; padding:0 16px 10px; }
-  #categorySaveRow button { flex:1; padding:12px 0; border-radius:12px; background:#1A2436; color:#E5EAF2; font-size:13px; font-weight:800; border:1px solid #253145; }
-  #saveDefectsPhone { color:#F87171 !important; }
-  #saveGeneralPhone { color:#60A5FA !important; }
   #galleryFooter { padding:10px 16px calc(env(safe-area-inset-bottom) + 12px); display:flex; gap:12px; }
   #exportBtn { flex:1.2; padding:15px 0; border-radius:14px; background:#F59E0B; color:#0B1220; font-size:14px; font-weight:800; }
   #newInspBtn { flex:0.8; padding:15px 0; border-radius:14px; background:#1A2436; color:#F87171; font-size:13px; font-weight:700; }
@@ -200,68 +196,6 @@
   #viewBtns { display:flex; gap:10px; }
   #viewBtns button { flex:1; padding:12px 0; border-radius:12px; background:#1A2436; color:#E5EAF2; font-size:14px; font-weight:700; }
 
-
-
-  /* ---------- v10 fast inspection flow ---------- */
-  .topBtn {
-    background:rgba(0,0,0,.45); color:#fff; border:1px solid rgba(255,255,255,.16);
-    border-radius:12px; padding:10px 12px; font-size:13px; font-weight:800;
-  }
-  #areaLabel { font-size:13px; color:#E5EAF2; margin-top:3px; font-weight:800; }
-  #quickPanel {
-    position:absolute; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 210px);
-    z-index:3; display:flex; flex-direction:column; gap:8px; pointer-events:auto;
-  }
-  #areaBtn {
-    width:100%; padding:12px 14px; border-radius:16px;
-    background:rgba(0,0,0,.56); color:#fff; border:1px solid rgba(255,255,255,.16);
-    backdrop-filter:blur(8px); font-size:15px; font-weight:900; text-align:left;
-  }
-  #modeRow { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
-  .modeBtn {
-    padding:12px 6px; border-radius:14px; background:rgba(0,0,0,.48); color:#D4DCE8;
-    font-size:13px; font-weight:900; border:1px solid rgba(255,255,255,.12); backdrop-filter:blur(8px);
-  }
-  .modeBtn.sel[data-mode="general"] { background:#1E3A8A; color:#fff; border-color:#60A5FA; }
-  .modeBtn.sel[data-mode="defect"] { background:#7F1D1D; color:#fff; border-color:#F87171; }
-  .modeBtn.sel[data-mode="required"] { background:#92400E; color:#fff; border-color:#F59E0B; }
-  #requiredHint { color:#FCD34D; font-size:12px; font-weight:800; padding:0 4px; min-height:14px; text-shadow:0 1px 2px #000; }
-  #camRightSpace { display:flex; width:92px; justify-content:flex-end; }
-  #checkBtn {
-    width:92px; padding:10px 0; border-radius:14px; background:rgba(0,0,0,.45);
-    color:#FCD34D; font-size:13px; font-weight:800; line-height:1.35; backdrop-filter:blur(6px);
-  }
-  #libraryScreen { background:#0B1220; }
-  #libraryList { flex:1; overflow-y:auto; padding:14px 16px 24px; display:flex; flex-direction:column; gap:12px; }
-  .jobCard { background:#131C2E; border:1px solid #253145; border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:10px; }
-  .jobTitle { font-size:16px; font-weight:900; color:#fff; }
-  .jobMeta { color:#93A3BC; font-size:13px; line-height:1.45; }
-  .jobBtns { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
-  .jobBtns button { padding:11px 6px; border-radius:12px; background:#1A2436; color:#E5EAF2; font-weight:800; font-size:13px; }
-  .jobBtns .openJob { background:#F59E0B; color:#0B1220; }
-  .jobBtns .deleteJob { color:#F87171; }
-  .emptyLibrary { color:#93A3BC; text-align:center; padding:40px 16px; line-height:1.5; }
-  .modal { position:fixed; inset:0; background:rgba(0,0,0,.72); z-index:60; display:flex; align-items:flex-end; justify-content:center; }
-  .modal[hidden] { display:none; }
-  .sheet { width:100%; max-height:86vh; overflow-y:auto; background:#0F1729; border:1px solid #253145; border-radius:22px 22px 0 0; padding:16px; display:flex; flex-direction:column; gap:12px; }
-  .sheet h3 { font-size:18px; }
-  .sheet p { color:#93A3BC; font-size:14px; line-height:1.45; }
-  .sheetGrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .sheetGrid button, .sheetAction {
-    padding:13px 10px; border-radius:13px; background:#1A2436; color:#E5EAF2; font-size:14px; font-weight:800; border:1px solid #253145; text-align:left;
-  }
-  .sheetGrid button.sel { border-color:#F59E0B; color:#FCD34D; background:#2A2113; }
-  .sheetClose { padding:13px 0; border-radius:14px; background:#253145; color:#E5EAF2; font-weight:900; }
-  .miniInput { width:100%; background:#1A2436; border:2px solid #253145; border-radius:12px; padding:12px 14px; color:#E5EAF2; font-size:16px; font-family:inherit; }
-  .checkGroup { display:flex; flex-direction:column; gap:8px; }
-  .checkGroup h4 { margin-top:6px; color:#F59E0B; font-size:14px; }
-  .checkItem { display:flex; gap:9px; align-items:flex-start; padding:12px; border-radius:13px; background:#1A2436; color:#E5EAF2; border:1px solid #253145; font-weight:800; text-align:left; }
-  .checkItem.done { background:#12351F; border-color:#16A34A; }
-  .checkItem small { display:block; color:#93A3BC; margin-top:3px; font-weight:600; }
-  .progressBox { background:#131C2E; border:1px solid #253145; border-radius:14px; padding:12px; color:#E5EAF2; font-size:14px; line-height:1.6; }
-  .bar { height:8px; background:#253145; border-radius:999px; overflow:hidden; margin-top:6px; }
-  .bar span { display:block; height:100%; background:#16A34A; width:0%; }
-
   /* ---------- Toast ---------- */
   #toast {
     position:fixed; left:50%; transform:translateX(-50%);
@@ -291,41 +225,22 @@
     <div>
       <h1><span>●</span> Inspection Camera <small id="ver"></small></h1>
       <div id="addrLabel"></div>
-      <div id="areaLabel"></div>
     </div>
-    <button class="topBtn" id="libraryBtn">Jobs</button>
+    <!-- Google Drive sign-in button. Visible when not connected to Drive. -->
+    <button id="googleDriveBtn" style="background:none;border:1px solid #F59E0B;color:#F59E0B;padding:6px 8px;border-radius:6px;font-size:12px;">
+      Drive
+    </button>
   </div>
   <div id="zoomChips">
     <button class="chip" id="chipHalf" hidden>.5</button>
     <button class="chip sel" id="chipOne">1×</button>
     <button class="chip" id="chipThree">3</button>
   </div>
-  <div id="quickPanel">
-    <button id="areaBtn">Area: Front / Cover</button>
-    <div id="modeRow">
-      <button class="modeBtn sel" data-mode="general" id="modeGeneral">General</button>
-      <button class="modeBtn" data-mode="defect" id="modeDefect">Defect</button>
-      <button class="modeBtn" data-mode="required" id="modeRequired">Required</button>
-    </div>
-    <div id="requiredHint"></div>
-  </div>
   <div id="camBottom">
     <button id="galleryBtn">Photos<br><span class="d">D: 0</span> · <span class="g">G: 0</span></button>
     <button id="shutter" aria-label="Take photo"></button>
-    <div id="camRightSpace"><button id="checkBtn">Missing<br><span id="missCount">0</span></button></div>
+    <div id="camRightSpace"></div>
   </div>
-</div>
-
-
-
-<!-- ============ INSPECTION LIBRARY ============ -->
-<div id="libraryScreen" class="screen">
-  <div class="topbar">
-    <button class="txt" id="libraryBack">‹ Camera</button>
-    <h2>Inspections</h2>
-    <button class="txt" id="libraryNew">New</button>
-  </div>
-  <div id="libraryList"></div>
 </div>
 
 <!-- ============ NOTE ============ -->
@@ -351,26 +266,23 @@
   <div class="topbar">
     <button class="txt" id="backToCam">‹ Camera</button>
     <h2>Inspection Photos</h2>
-    <button class="txt" id="galleryJobs">Jobs</button>
+    <button class="txt" id="exportTop" style="visibility:hidden">.</button>
   </div>
   <div id="propRow"><input id="propName" placeholder="Property address (used in export file name)"></div>
   <label id="autoSaveRow">
     <input type="checkbox" id="autoSaveChk">
-    <span><b>After each photo, open iPhone “Save Image” prompt</b><small>HTML apps cannot silently save to Photos or create albums. This is the closest iPhone allows without a native app.</small></span>
+    Offer “Save Image” to your gallery after every photo
   </label>
   <div id="tabs">
     <button class="tab sel" id="tabDefects">🔴 Defects (0)</button>
     <button class="tab" id="tabGeneral">🔵 General (0)</button>
   </div>
-  <div id="categorySaveRow">
-    <button id="saveDefectsPhone">📱 Save Defects</button>
-    <button id="saveGeneralPhone">📱 Save General</button>
-  </div>
   <div id="grid"></div>
   <div id="galleryFooter">
-    <button id="newInspBtn">New Job</button>
+    <button id="newInspBtn">New</button>
     <button id="saveAllBtn">📱 Save to Phone</button>
-    <button id="exportBtn">⬇︎ Export ZIP</button>
+    <button id="driveBackupBtn">⇧ Drive</button>
+    <button id="exportBtn">⬇︎ ZIP</button>
   </div>
 </div>
 
@@ -395,121 +307,44 @@
 <div id="addrModal" hidden>
   <div id="addrBox">
     <h3>🏠 New Inspection</h3>
-    <p>Enter the property address. This creates a new job. Old jobs stay saved unless you delete them.</p>
+    <p>Enter the property address. It labels this inspection — it appears on the camera screen, in every photo's file name, and on the export.</p>
     <input id="addrInput" placeholder="123 Main St" autocomplete="off">
     <div id="addrBtns">
-      <button id="addrSkip">Cancel</button>
+      <button id="addrSkip">Skip</button>
       <button id="addrStart">Start Inspection</button>
     </div>
   </div>
 </div>
 
-
-
-<div id="areaModal" class="modal" hidden>
-  <div class="sheet">
-    <h3>Pick Area</h3>
-    <p>Every photo uses this area until you change it.</p>
-    <div id="areaGrid" class="sheetGrid"></div>
-    <button class="sheetAction" id="addBathroomBtn">+ Add Bathroom</button>
-    <button class="sheetAction" id="addBedroomBtn">+ Add Bedroom</button>
-    <input id="customAreaInput" class="miniInput" placeholder="Other area, like Office or Cabana bath">
-    <button class="sheetAction" id="addCustomAreaBtn">+ Add Custom Area</button>
-    <button class="sheetClose" id="areaClose">Done</button>
-  </div>
-</div>
-
-<div id="requiredModal" class="modal" hidden>
-  <div class="sheet">
-    <h3>Required Photos</h3>
-    <p>Tap what you need. The next photo will be filed there and marked done.</p>
-    <div id="progressBox" class="progressBox"></div>
-    <div id="requiredList"></div>
-    <button class="sheetClose" id="requiredClose">Done</button>
-  </div>
-</div>
-
 <div id="toast"></div>
-
 
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
-const APP_VERSION = 'v10';
+const APP_VERSION = 'v7';
 
-/* ================= Data ================= */
+/* ================= State ================= */
 let db = null;
-let inspections = [];
-let allPhotos = [];
-let photos = [];
-let activeInspection = null;
-let pending = null;
-let currentCat = 'general';
-let currentMode = 'general';
-let currentRequired = null;
+let photos = [];            // in-memory copy of all saved photos (blob + meta)
+let pending = null;         // photo captured but not yet saved
+let currentCat = 'general'; // category selected on note screen
 let galleryTab = 'defect';
 let viewingId = null;
-
-const DEFAULT_AREAS = [
-  'Front / Cover', 'Roof / Drone', 'Exterior - Front', 'Exterior - Left', 'Exterior - Right', 'Exterior - Rear',
-  'Windows / Openings', 'Garage', 'Kitchen', 'Laundry', 'Attic', 'Electrical', 'HVAC', 'Plumbing', 'Pool', 'Other'
-];
-
-const REQUIRED_GROUPS = [
-  { id:'wind', title:'Wind Mit', items:[
-    ['wind-front','Front photo with house number','Front / Cover'],
-    ['wind-roof-shape','Roof shape / roof overview','Roof / Drone'],
-    ['wind-all-sides','All sides of home','Exterior - Front'],
-    ['wind-window-label','Impact window or shutter label','Windows / Openings'],
-    ['wind-door','Front door / exterior doors','Windows / Openings'],
-    ['wind-slider','Sliding glass door label','Windows / Openings'],
-    ['wind-shutter-label','Miami-Dade / Florida shutter label','Windows / Openings'],
-    ['wind-garage-label','Garage door label','Garage'],
-    ['wind-garage-brace','Garage door bracing','Garage'],
-    ['wind-attic-deck','Roof deck nail photo','Attic'],
-    ['wind-nail-spacing','Roof deck nail spacing','Attic'],
-    ['wind-rtw','Roof-to-wall connection','Attic'],
-    ['wind-swr','Secondary water resistance proof if visible','Attic']
-  ]},
-  { id:'four', title:'4-Point', items:[
-    ['four-roof','Roof covering photos','Roof / Drone'],
-    ['four-main-panel','Main electrical panel front','Electrical'],
-    ['four-panel-label','Panel label','Electrical'],
-    ['four-panel-open','Panel open / breakers','Electrical'],
-    ['four-wiring','Visible wiring type','Electrical'],
-    ['four-subpanel','Subpanel if present','Electrical'],
-    ['four-condenser','Outside AC condenser label','HVAC'],
-    ['four-airhandler','Air handler label','HVAC'],
-    ['four-wh','Water heater full view','Plumbing'],
-    ['four-wh-label','Water heater label','Plumbing'],
-    ['four-tpr','TPR valve / discharge pipe','Plumbing'],
-    ['four-sink-plumbing','Under sink plumbing / leaks','Plumbing'],
-    ['four-laundry','Laundry connections if present','Laundry'],
-    ['four-dishwasher','Dishwasher running / installed','Kitchen']
-  ]}
-];
-const REQUIRED_ITEMS = REQUIRED_GROUPS.flatMap(g => g.items.map(([id,label,area]) => ({ id, label, area, group:g.id, groupTitle:g.title })));
 
 /* ================= IndexedDB ================= */
 function openDB() {
   return new Promise((res, rej) => {
-    const r = indexedDB.open('inspectionDB', 2);
-    r.onupgradeneeded = e => {
-      const d = e.target.result;
-      if (!d.objectStoreNames.contains('photos')) d.createObjectStore('photos', { keyPath: 'id' });
-      if (!d.objectStoreNames.contains('inspections')) d.createObjectStore('inspections', { keyPath: 'id' });
-    };
+    const r = indexedDB.open('inspectionDB', 1);
+    r.onupgradeneeded = e => e.target.result.createObjectStore('photos', { keyPath: 'id' });
     r.onsuccess = e => { db = e.target.result; res(); };
     r.onerror = () => rej(r.error);
   });
 }
-const txStore = (name, mode) => db.transaction(name, mode).objectStore(name);
-const dbPutPhoto = p => new Promise((res, rej) => { const r = txStore('photos','readwrite').put(p); r.onsuccess = res; r.onerror = () => rej(r.error); });
-const dbAllPhotos = () => new Promise((res, rej) => { const r = txStore('photos','readonly').getAll(); r.onsuccess = () => res(r.result || []); r.onerror = () => rej(r.error); });
-const dbDelPhoto = id => new Promise((res, rej) => { const r = txStore('photos','readwrite').delete(id); r.onsuccess = res; r.onerror = () => rej(r.error); });
-const dbPutInspection = i => new Promise((res, rej) => { const r = txStore('inspections','readwrite').put(i); r.onsuccess = res; r.onerror = () => rej(r.error); });
-const dbAllInspections = () => new Promise((res, rej) => { const r = txStore('inspections','readonly').getAll(); r.onsuccess = () => res(r.result || []); r.onerror = () => rej(r.error); });
-const dbDelInspection = id => new Promise((res, rej) => { const r = txStore('inspections','readwrite').delete(id); r.onsuccess = res; r.onerror = () => rej(r.error); });
+const store = mode => db.transaction('photos', mode).objectStore('photos');
+const dbPut = p  => new Promise((res, rej) => { const r = store('readwrite').put(p);    r.onsuccess = res; r.onerror = () => rej(r.error); });
+const dbAll = () => new Promise((res, rej) => { const r = store('readonly').getAll();   r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+const dbDel = id => new Promise((res, rej) => { const r = store('readwrite').delete(id); r.onsuccess = res; r.onerror = () => rej(r.error); });
+const dbClear = () => new Promise((res, rej) => { const r = store('readwrite').clear(); r.onsuccess = res; r.onerror = () => rej(r.error); });
 
 /* ================= Screens / toast ================= */
 function show(id) {
@@ -523,113 +358,6 @@ function toast(msg, isErr) {
   t.className = 'show' + (isErr ? ' err' : '');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.className = '', 2200);
-}
-
-function nowId(prefix) { return prefix + '-' + Date.now() + '-' + Math.floor(Math.random() * 1e6); }
-function makeInspection(address) {
-  const clean = (address || '').trim() || 'Inspection';
-  return {
-    id: nowId('insp'), address: clean, createdAt: Date.now(), updatedAt: Date.now(), backedUp: false,
-    currentArea: 'Front / Cover', areas: DEFAULT_AREAS.slice(), checklist: {}, rooms: { bathroom:0, bedroom:0 }
-  };
-}
-async function saveInspection() {
-  if (!activeInspection) return;
-  activeInspection.updatedAt = Date.now();
-  await dbPutInspection(activeInspection);
-  const idx = inspections.findIndex(i => i.id === activeInspection.id);
-  if (idx >= 0) inspections[idx] = activeInspection; else inspections.push(activeInspection);
-}
-async function loadAllData() {
-  allPhotos = await dbAllPhotos();
-  inspections = await dbAllInspections();
-  // Migrate old single-inspection photos from v9 and older.
-  if (!inspections.length && allPhotos.length) {
-    const legacy = makeInspection(localStorage.getItem('propName') || 'Old Inspection');
-    inspections.push(legacy);
-    await dbPutInspection(legacy);
-    for (const p of allPhotos) {
-      if (!p.inspectionId) { p.inspectionId = legacy.id; p.area = p.area || legacy.currentArea; await dbPutPhoto(p); }
-    }
-  }
-  inspections.sort((a,b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
-  const savedId = localStorage.getItem('currentInspectionId');
-  activeInspection = inspections.find(i => i.id === savedId) || inspections[0] || null;
-  if (activeInspection) await loadInspection(activeInspection.id, false);
-  else { photos = []; updateAllUI(); }
-}
-async function loadInspection(id, goCamera = true) {
-  activeInspection = inspections.find(i => i.id === id) || null;
-  if (!activeInspection) return;
-  if (!activeInspection.areas || !activeInspection.areas.length) activeInspection.areas = DEFAULT_AREAS.slice();
-  if (!activeInspection.currentArea) activeInspection.currentArea = activeInspection.areas[0] || 'Front / Cover';
-  if (!activeInspection.checklist) activeInspection.checklist = {};
-  localStorage.setItem('currentInspectionId', activeInspection.id);
-  localStorage.setItem('propName', activeInspection.address || 'Inspection');
-  photos = allPhotos.filter(p => p.inspectionId === activeInspection.id);
-  currentMode = 'general'; currentRequired = null;
-  updateAllUI();
-  if (goCamera) { show('camScreen'); startCam(); }
-}
-async function createNewInspection(address) {
-  const insp = makeInspection(address);
-  inspections.unshift(insp);
-  await dbPutInspection(insp);
-  activeInspection = insp;
-  photos = [];
-  localStorage.setItem('currentInspectionId', insp.id);
-  localStorage.setItem('propName', insp.address);
-  updateAllUI();
-  show('camScreen'); startCam();
-  toast('New job created');
-}
-
-function currentArea() { return activeInspection ? (activeInspection.currentArea || 'Front / Cover') : 'No job'; }
-function propLabel() { return sanitize(activeInspection?.address || localStorage.getItem('propName') || 'Inspection') || 'Inspection'; }
-function setArea(area) {
-  if (!activeInspection || !area) return;
-  if (!activeInspection.areas.includes(area)) activeInspection.areas.push(area);
-  activeInspection.currentArea = area;
-  saveInspection().catch(() => {});
-  updateAllUI();
-}
-function addNextRoom(type) {
-  if (!activeInspection) return;
-  const base = type === 'bathroom' ? 'Bathroom' : 'Bedroom';
-  let n = 1;
-  while (activeInspection.areas.includes(`${base} ${n}`)) n++;
-  const area = `${base} ${n}`;
-  activeInspection.areas.push(area);
-  setArea(area);
-  renderAreaModal();
-}
-function setMode(mode) {
-  currentMode = mode;
-  if (mode !== 'required') currentRequired = null;
-  if (mode === 'required' && !currentRequired) showRequiredModal();
-  updateModeUI();
-}
-function updateModeUI() {
-  document.querySelectorAll('.modeBtn').forEach(b => b.classList.toggle('sel', b.dataset.mode === currentMode));
-  $('requiredHint').textContent = currentMode === 'required' && currentRequired ? 'Next photo: ' + currentRequired.groupTitle + ' — ' + currentRequired.label : '';
-}
-function checklistStats(groupId = null) {
-  const items = REQUIRED_ITEMS.filter(i => !groupId || i.group === groupId);
-  const done = items.filter(i => activeInspection?.checklist?.[i.id]).length;
-  return { done, total: items.length, pct: items.length ? Math.round(done / items.length * 100) : 0 };
-}
-function missingCount() { const s = checklistStats(); return s.total - s.done; }
-function updateAllUI() {
-  updateAddrLabel(); updateCounts(); updateModeUI(); renderLibrary();
-  if ($('propName')) $('propName').value = activeInspection?.address || '';
-}
-function updateAddrLabel() {
-  $('addrLabel').textContent = activeInspection?.address || '';
-  $('areaLabel').textContent = activeInspection ? 'Area: ' + currentArea() : '';
-  $('areaBtn').textContent = 'Area: ' + currentArea();
-  const miss = activeInspection ? missingCount() : 0;
-  $('missCount').textContent = String(miss);
-  $('checkBtn').innerHTML = `Missing<br><span id="missCount">${miss}</span>`;
 }
 
 /* ================= Camera ================= */
@@ -856,11 +584,8 @@ $('camWrap').addEventListener('touchmove', e => {
   }
 }, { passive: false });
 
-
 /* capture */
 $('shutter').onclick = () => {
-  if (!activeInspection) { showAddrModal(); return; }
-  if (currentMode === 'required' && !currentRequired) { showRequiredModal(); toast('Pick required photo first', true); return; }
   if (!stream || !vid.videoWidth) {
     toast('Camera not ready', true);
     if (!camStarting) startCam();
@@ -871,7 +596,7 @@ $('shutter').onclick = () => {
 
   const vw = vid.videoWidth, vh = vid.videoHeight;
   let sx = 0, sy = 0, sw = vw, sh = vh;
-  if (digitalZoom > 1.001) {
+  if (digitalZoom > 1.001) {                // digital zoom: crop the center to match
     sw = vw / digitalZoom; sh = vh / digitalZoom;
     sx = (vw - sw) / 2; sy = (vh - sh) / 2;
   }
@@ -880,41 +605,19 @@ $('shutter').onclick = () => {
   c.getContext('2d').drawImage(vid, sx, sy, sw, sh, 0, 0, c.width, c.height);
   c.toBlob(blob => {
     if (!blob) { toast('Capture failed, try again', true); return; }
-    pending = {
-      id: nowId('photo'), blob, ts: Date.now(), inspectionId: activeInspection.id,
-      area: currentArea(), mode: currentMode
-    };
-    if (currentMode === 'defect') {
-      openNoteScreen('defect');
-    } else if (currentMode === 'required') {
-      pending.cat = 'general';
-      pending.note = currentRequired.label;
-      pending.requiredId = currentRequired.id;
-      pending.requiredGroup = currentRequired.group;
-      pending.requiredLabel = currentRequired.label;
-      savePhotoRecord(pending, false);
-      pending = null;
-      currentRequired = null;
-      currentMode = 'general';
-      updateModeUI();
-    } else {
-      pending.cat = 'general';
-      pending.note = currentArea() + ' general photo';
-      savePhotoRecord(pending, false);
-      pending = null;
-    }
+    pending = { id: Date.now() + '-' + Math.floor(Math.random() * 1e6), blob, ts: Date.now() };
+    openNoteScreen();
   }, 'image/jpeg', 0.88);
 };
 
-/* ================= Note screen ================= */
+/* ================= Note screen (voice + text) ================= */
 let noteURL = null;
-function openNoteScreen(defaultCat = 'general') {
-  if (!pending) return;
+function openNoteScreen() {
   if (noteURL) URL.revokeObjectURL(noteURL);
   noteURL = URL.createObjectURL(pending.blob);
   $('notePhoto').src = noteURL;
   $('noteText').value = '';
-  setCat(defaultCat);
+  setCat('general');
   show('noteScreen');
   startListening(true);
 }
@@ -925,21 +628,33 @@ function setCat(c) {
 }
 $('catDefect').onclick  = () => setCat('defect');
 $('catGeneral').onclick = () => setCat('general');
+
+/* leading keyword decides the category and is stripped from the note:
+   "Defect, HVAC not cooling"  -> defect / "HVAC not cooling"
+   "General picture, guest bedroom 1" -> general / "guest bedroom 1" */
 function parseNote(t) {
-  const s = (t || '').trim();
+  const s = t.trim();
   let m = s.match(/^(defects?|deffects?)\s*(picture|photo|pic)?\s*[,.:;\-]*\s*/i);
   if (m) return { cat: 'defect', note: s.slice(m[0].length) };
   m = s.match(/^general\s*(picture|photo|pic)?\s*[,.:;\-]*\s*/i);
   if (m) return { cat: 'general', note: s.slice(m[0].length) };
   return { cat: null, note: s };
 }
+
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let rec = null, listening = false, sessionBase = '';
+
 function startListening(auto) {
-  if (!SR) { $('micHint').textContent = 'Tap the note box and use the keyboard mic.'; return; }
+  if (!SR) {
+    $('micHint').textContent = 'Tap the note box and use the 🎤 key on your keyboard to dictate.';
+    return;
+  }
   if (listening) return;
   sessionBase = $('noteText').value.trim();
-  rec = new SR(); rec.lang = 'en-US'; rec.interimResults = true; rec.continuous = false;
+  rec = new SR();
+  rec.lang = 'en-US';
+  rec.interimResults = true;
+  rec.continuous = false;
   rec.onresult = e => {
     let text = '';
     for (const r of e.results) text += r[0].transcript;
@@ -947,156 +662,73 @@ function startListening(auto) {
     if (p.cat) setCat(p.cat);
     $('noteText').value = (sessionBase ? sessionBase + ' ' : '') + p.note;
   };
-  rec.onend = () => { listening = false; $('micBtn').classList.remove('on'); $('micHint').textContent = 'Tap mic to add more, or edit note.'; };
-  rec.onerror = () => { listening = false; $('micBtn').classList.remove('on'); $('micHint').textContent = auto ? 'Tap mic or use keyboard mic.' : 'Voice did not start.'; };
-  try { rec.start(); listening = true; $('micBtn').classList.add('on'); $('micHint').textContent = 'Listening… say “Defect, …”'; } catch (e) {}
+  rec.onend = () => {
+    listening = false;
+    $('micBtn').classList.remove('on');
+    $('micHint').textContent = 'Tap the mic to add more, or edit the note below.';
+  };
+  rec.onerror = () => {
+    listening = false;
+    $('micBtn').classList.remove('on');
+    $('micHint').textContent = auto
+      ? 'Tap the mic to speak, or type / dictate with the keyboard 🎤.'
+      : 'Voice didn’t start — use the keyboard 🎤 key to dictate.';
+  };
+  try {
+    rec.start();
+    listening = true;
+    $('micBtn').classList.add('on');
+    $('micHint').textContent = 'Listening… say “Defect, …” or “General, …”';
+  } catch (e) { /* already started or blocked */ }
 }
 function stopListening() { if (rec) { try { rec.stop(); } catch (e) {} } listening = false; $('micBtn').classList.remove('on'); }
 $('micBtn').onclick = () => listening ? stopListening() : startListening(false);
-$('noteText').addEventListener('input', () => { const p = parseNote($('noteText').value); if (p.cat) setCat(p.cat); });
 
-async function savePhotoRecord(rec, offerPhonePrompt) {
-  if (!rec || !activeInspection) return;
-  rec.inspectionId = activeInspection.id;
-  rec.area = rec.area || currentArea();
-  rec.cat = rec.cat || 'general';
-  rec.note = (rec.note || '').trim() || (rec.cat === 'defect' ? 'Defect' : rec.area + ' photo');
-  if (rec.requiredId) {
-    activeInspection.checklist[rec.requiredId] = true;
-  }
-  try {
-    await dbPutPhoto(rec);
-    const old = allPhotos.findIndex(p => p.id === rec.id);
-    if (old >= 0) allPhotos[old] = rec; else allPhotos.push(rec);
-    const localOld = photos.findIndex(p => p.id === rec.id);
-    if (localOld >= 0) photos[localOld] = rec; else photos.push(rec);
-    await saveInspection();
-    updateAllUI();
-    toast(rec.cat === 'defect' ? 'Defect saved' : rec.requiredId ? 'Required photo saved' : 'Photo saved');
-  } catch (e) { toast('Could not save photo', true); }
+/* typing a keyword also flips the category */
+$('noteText').addEventListener('input', () => {
+  const p = parseNote($('noteText').value);
+  if (p.cat) setCat(p.cat);
+});
+
+function galleryFileName(p) {
+  const prop = sanitize(localStorage.getItem('propName') || '') || 'Inspection';
+  return `${prop} - ${p.cat === 'defect' ? 'Defect' : 'General'} - ${sanitize(p.note) || 'photo'}.jpg`;
 }
 $('saveBtn').onclick = () => {
   stopListening();
-  if (!pending) { show('camScreen'); return; }
-  const parsed = parseNote($('noteText').value);
+  const parsed = parseNote($('noteText').value);   // strip keyword if user typed it
   const rec = pending;
   pending = null;
   rec.cat = parsed.cat || currentCat;
   rec.note = parsed.note || $('noteText').value.trim();
+  // hand the photo to iOS right away so one tap ("Save Image") puts it in the
+  // phone's gallery — this must run synchronously inside this tap (Apple rule)
   if (localStorage.getItem('autoSave') !== '0' && navigator.canShare) {
-    const f = new File([rec.blob], phoneFileName(rec), { type: 'image/jpeg' });
-    if (navigator.canShare({ files: [f] })) navigator.share({ files: [f] }).catch(() => {});
+    const f = new File([rec.blob], galleryFileName(rec), { type: 'image/jpeg' });
+    if (navigator.canShare({ files: [f] })) {
+      navigator.share({ files: [f] })
+        .then(() => { rec.saved = true; dbPut(rec).catch(() => {}); updateSaveAllLabel(); })
+        .catch(() => { /* user skipped the share sheet */ });
+    }
   }
-  savePhotoRecord(rec, true);
-  currentMode = 'general'; updateModeUI();
+  (async () => {
+    try {
+      await dbPut(rec);
+      photos.push(rec);
+      const n = photos.filter(x => x.cat === rec.cat).length;
+      toast(`Saved to ${rec.cat === 'defect' ? 'Defects' : 'General'} (${n})`);
+    } catch (e) {
+      toast('Could not save photo!', true);
+    }
+    updateCounts();
+  })();
   show('camScreen');
 };
-$('discardBtn').onclick = () => { stopListening(); pending = null; show('camScreen'); };
-
-/* ================= Areas and required photos ================= */
-function renderAreaModal() {
-  const grid = $('areaGrid'); grid.innerHTML = '';
-  if (!activeInspection) return;
-  activeInspection.areas.forEach(area => {
-    const b = document.createElement('button');
-    b.textContent = area;
-    b.className = area === currentArea() ? 'sel' : '';
-    b.onclick = () => { setArea(area); renderAreaModal(); $('areaModal').hidden = true; };
-    grid.appendChild(b);
-  });
-}
-function showAreaModal() { renderAreaModal(); $('areaModal').hidden = false; }
-$('areaBtn').onclick = showAreaModal;
-$('areaClose').onclick = () => $('areaModal').hidden = true;
-$('addBathroomBtn').onclick = () => addNextRoom('bathroom');
-$('addBedroomBtn').onclick = () => addNextRoom('bedroom');
-$('addCustomAreaBtn').onclick = () => {
-  const v = $('customAreaInput').value.trim();
-  if (!v) return;
-  $('customAreaInput').value = '';
-  if (!activeInspection.areas.includes(v)) activeInspection.areas.push(v);
-  setArea(v); renderAreaModal(); $('areaModal').hidden = true;
+$('discardBtn').onclick = () => {
+  stopListening();
+  pending = null;
+  show('camScreen');
 };
-function renderRequiredModal() {
-  if (!activeInspection) return;
-  const all = checklistStats(); const wind = checklistStats('wind'); const four = checklistStats('four');
-  $('progressBox').innerHTML = `All required: <b>${all.done}/${all.total}</b> (${all.pct}%)<div class="bar"><span style="width:${all.pct}%"></span></div>Wind Mit: <b>${wind.done}/${wind.total}</b> &nbsp; 4-Point: <b>${four.done}/${four.total}</b>`;
-  const wrap = $('requiredList'); wrap.innerHTML = '';
-  for (const group of REQUIRED_GROUPS) {
-    const div = document.createElement('div'); div.className = 'checkGroup';
-    const st = checklistStats(group.id);
-    div.innerHTML = `<h4>${group.title} — ${st.done}/${st.total}</h4>`;
-    for (const [id,label,area] of group.items) {
-      const item = REQUIRED_ITEMS.find(x => x.id === id);
-      const done = !!activeInspection.checklist[id];
-      const b = document.createElement('button');
-      b.className = 'checkItem' + (done ? ' done' : '');
-      b.innerHTML = `<span>${done ? '✓' : '○'}</span><span>${escapeHTML(label)}<small>${escapeHTML(area)}</small></span>`;
-      b.onclick = () => {
-        currentRequired = item;
-        currentMode = 'required';
-        setArea(item.area);
-        $('requiredModal').hidden = true;
-        updateModeUI();
-        toast('Next photo: ' + item.label);
-      };
-      div.appendChild(b);
-    }
-    wrap.appendChild(div);
-  }
-}
-function showRequiredModal() { renderRequiredModal(); $('requiredModal').hidden = false; }
-$('modeGeneral').onclick = () => setMode('general');
-$('modeDefect').onclick = () => setMode('defect');
-$('modeRequired').onclick = () => { currentMode = 'required'; showRequiredModal(); updateModeUI(); };
-$('checkBtn').onclick = showRequiredModal;
-$('requiredClose').onclick = () => { $('requiredModal').hidden = true; if (!currentRequired && currentMode === 'required') setMode('general'); };
-
-/* ================= Library ================= */
-function renderLibrary() {
-  const list = $('libraryList');
-  if (!list) return;
-  list.innerHTML = '';
-  if (!inspections.length) {
-    list.innerHTML = '<div class="emptyLibrary">No inspections yet.<br>Tap New to start one.</div>';
-    return;
-  }
-  const byId = id => allPhotos.filter(p => p.inspectionId === id);
-  inspections.slice().sort((a,b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt)).forEach(insp => {
-    const ps = byId(insp.id);
-    const d = ps.filter(p => p.cat === 'defect').length;
-    const g = ps.length - d;
-    const done = REQUIRED_ITEMS.filter(i => insp.checklist?.[i.id]).length;
-    const total = REQUIRED_ITEMS.length;
-    const card = document.createElement('div'); card.className = 'jobCard';
-    card.innerHTML = `<div class="jobTitle">${escapeHTML(insp.address || 'Inspection')}</div>
-      <div class="jobMeta">${new Date(insp.createdAt).toLocaleString()}<br>${ps.length} photos · ${d} defects · ${g} general<br>Required: ${done}/${total}</div>
-      <div class="jobBtns"><button class="openJob">Open</button><button class="exportJob">Gallery</button><button class="deleteJob">Delete</button></div>`;
-    card.querySelector('.openJob').onclick = () => loadInspection(insp.id, true);
-    card.querySelector('.exportJob').onclick = async () => { await loadInspection(insp.id, false); openGallery(); };
-    card.querySelector('.deleteJob').onclick = () => deleteInspectionSafe(insp.id);
-    list.appendChild(card);
-  });
-}
-async function deleteInspectionSafe(id) {
-  const insp = inspections.find(i => i.id === id); if (!insp) return;
-  const ps = allPhotos.filter(p => p.inspectionId === id);
-  const typed = prompt(`This deletes ${ps.length} photos from this phone for:\n\n${insp.address}\n\nType DELETE to confirm.`);
-  if (typed !== 'DELETE') { toast('Delete cancelled'); return; }
-  for (const p of ps) await dbDelPhoto(p.id);
-  await dbDelInspection(id);
-  allPhotos = allPhotos.filter(p => p.inspectionId !== id);
-  inspections = inspections.filter(i => i.id !== id);
-  if (activeInspection?.id === id) {
-    activeInspection = inspections[0] || null;
-    if (activeInspection) await loadInspection(activeInspection.id, false); else { photos = []; localStorage.removeItem('currentInspectionId'); }
-  }
-  updateAllUI(); renderLibrary(); toast('Inspection deleted');
-}
-$('libraryBtn').onclick = () => { stopCam(); renderLibrary(); show('libraryScreen'); };
-$('libraryBack').onclick = () => { show('camScreen'); startCam(); };
-$('libraryNew').onclick = () => showAddrModal();
-$('galleryJobs').onclick = () => { renderLibrary(); show('libraryScreen'); };
 
 /* ================= Gallery ================= */
 let gridURLs = [];
@@ -1110,172 +742,421 @@ function updateCounts() {
 }
 function updateSaveAllLabel() {
   const unsaved = photos.filter(p => !p.saved).length;
-  $('saveAllBtn').textContent = unsaved ? `📱 Save Unsent (${unsaved})` : '📱 Save All';
+  $('saveAllBtn').textContent = unsaved ? `📱 Save to Phone (${unsaved})` : '📱 Save to Phone';
 }
 function openGallery() { updateCounts(); renderGrid(); show('galleryScreen'); }
 function renderGrid() {
   gridURLs.forEach(u => URL.revokeObjectURL(u)); gridURLs = [];
-  const grid = $('grid'); grid.innerHTML = '';
-  const list = photos.filter(p => p.cat === galleryTab).sort((a,b) => b.ts - a.ts);
-  if (!list.length) { grid.innerHTML = `<div id="emptyMsg">No ${galleryTab === 'defect' ? 'defect' : 'general'} photos yet.</div>`; return; }
+  const grid = $('grid');
+  grid.innerHTML = '';
+  const list = photos.filter(p => p.cat === galleryTab).sort((a, b) => b.ts - a.ts);
+  if (!list.length) {
+    grid.innerHTML = `<div id="emptyMsg">No ${galleryTab === 'defect' ? 'defect' : 'general'} photos yet.<br>Take a photo and say “${galleryTab === 'defect' ? 'Defect, …' : 'General, …'}”</div>`;
+    return;
+  }
   for (const p of list) {
     const u = URL.createObjectURL(p.blob); gridURLs.push(u);
-    const cell = document.createElement('button'); cell.className = 'cell';
-    cell.innerHTML = `<img src="${u}" alt=""><span>${escapeHTML((p.area ? p.area + ' — ' : '') + (p.note || 'no note'))}</span>`;
+    const cell = document.createElement('button');
+    cell.className = 'cell';
+    cell.innerHTML = `<img src="${u}" alt=""><span>${escapeHTML(p.note || 'no note')}</span>`;
     cell.onclick = () => openViewer(p.id);
     grid.appendChild(cell);
   }
 }
-const escapeHTML = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escapeHTML = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 $('galleryBtn').onclick = () => { stopCam(); openGallery(); };
 $('backToCam').onclick = () => { show('camScreen'); startCam(); };
-$('tabDefects').onclick = () => { galleryTab = 'defect'; $('tabDefects').classList.add('sel'); $('tabGeneral').classList.remove('sel'); renderGrid(); };
+$('tabDefects').onclick = () => { galleryTab = 'defect';  $('tabDefects').classList.add('sel'); $('tabGeneral').classList.remove('sel'); renderGrid(); };
 $('tabGeneral').onclick = () => { galleryTab = 'general'; $('tabGeneral').classList.add('sel'); $('tabDefects').classList.remove('sel'); renderGrid(); };
-$('propName').addEventListener('input', () => {
-  if (!activeInspection) return;
-  activeInspection.address = $('propName').value.trim() || 'Inspection';
-  localStorage.setItem('propName', activeInspection.address);
-  saveInspection().catch(() => {}); updateAddrLabel(); renderLibrary();
-});
-function showAddrModal() { $('addrInput').value = ''; $('addrModal').hidden = false; setTimeout(() => $('addrInput').focus(), 100); }
-$('addrStart').onclick = async () => { const v = $('addrInput').value.trim() || 'Inspection'; $('addrModal').hidden = true; await createNewInspection(v); };
-$('addrSkip').onclick  = () => { $('addrModal').hidden = true; if (!activeInspection) { renderLibrary(); show('libraryScreen'); } };
-$('addrInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('addrStart').click(); });
-$('newInspBtn').onclick = () => showAddrModal();
+
+$('propName').value = localStorage.getItem('propName') || '';
+$('propName').addEventListener('input', () => { localStorage.setItem('propName', $('propName').value); updateAddrLabel(); });
+
+/* --- property address: shown on camera, asked for at each new inspection --- */
+function updateAddrLabel() {
+  $('addrLabel').textContent = (localStorage.getItem('propName') || '').trim();
+}
+function showAddrModal() {
+  $('addrInput').value = localStorage.getItem('propName') || '';
+  $('addrModal').hidden = false;
+  setTimeout(() => $('addrInput').focus(), 100);
+}
+function closeAddrModal(save) {
+  if (save) {
+    const v = $('addrInput').value.trim();
+    localStorage.setItem('propName', v);
+    $('propName').value = v;
+    updateAddrLabel();
+  }
+  $('addrModal').hidden = true;
+}
+$('addrStart').onclick = () => closeAddrModal(true);
+$('addrSkip').onclick  = () => closeAddrModal(false);
+$('addrInput').addEventListener('keydown', e => { if (e.key === 'Enter') closeAddrModal(true); });
+
+$('newInspBtn').onclick = async () => {
+  if (photos.length) {
+    if (!confirm(`Delete all ${photos.length} photos and start a new inspection?\n\nSave to Phone or Export first if you haven't!`)) return;
+    await dbClear();
+    photos = [];
+  }
+  localStorage.removeItem('propName');
+  $('propName').value = '';
+  updateAddrLabel();
+  updateCounts(); renderGrid();
+  showAddrModal();
+};
+
+/* --- auto-save toggle --- */
 $('autoSaveChk').checked = localStorage.getItem('autoSave') !== '0';
 $('autoSaveChk').onchange = () => localStorage.setItem('autoSave', $('autoSaveChk').checked ? '1' : '0');
 
-async function sharePhotosToPhone(targets, label) {
-  if (!targets.length) { toast('No photos to save', true); return; }
-  const ordered = targets.slice().sort((a,b) => a.ts - b.ts);
-  const counters = { defect:1, general:1 };
-  const files = ordered.map(p => new File([p.blob], phoneFileName(p, counters[p.cat]++), { type:'image/jpeg' }));
+/* --- send photos to the iPhone gallery via the share sheet ---
+   offers only the not-yet-saved ones; if everything is saved, offers all again */
+$('saveAllBtn').onclick = async () => {
+  if (!photos.length) { toast('No photos yet', true); return; }
+  const unsaved = photos.filter(p => !p.saved);
+  const targets = unsaved.length ? unsaved : photos;
+  const prop = sanitize($('propName').value) || 'Inspection';
+  const files = [];
+  for (const [label, cat] of [['Defect', 'defect'], ['General', 'general']]) {
+    const list = targets.filter(p => p.cat === cat).sort((a, b) => a.ts - b.ts);
+    let i = 1;
+    for (const p of list) {
+      files.push(new File([p.blob],
+        `${prop} - ${label} ${String(i++).padStart(3, '0')} - ${sanitize(p.note) || 'photo'}.jpg`,
+        { type: 'image/jpeg' }));
+    }
+  }
   if (navigator.canShare && navigator.canShare({ files })) {
     try {
-      await navigator.share({ files, title: label || propLabel() + ' Photos' });
-      for (const p of ordered) { p.saved = true; dbPutPhoto(p).catch(() => {}); }
-      updateSaveAllLabel(); toast('Sent to iPhone share sheet');
-    } catch(e) {}
-  } else toast('Too many photos to share at once. Use ZIP.', true);
-}
-$('saveAllBtn').onclick = async () => { const unsaved = photos.filter(p => !p.saved); await sharePhotosToPhone(unsaved.length ? unsaved : photos, propLabel() + ' Photos'); };
-$('saveDefectsPhone').onclick = async () => sharePhotosToPhone(photos.filter(p => p.cat === 'defect'), propLabel() + ' Defects');
-$('saveGeneralPhone').onclick = async () => sharePhotosToPhone(photos.filter(p => p.cat === 'general'), propLabel() + ' General');
+      await navigator.share({ files });
+      for (const p of targets) { p.saved = true; dbPut(p).catch(() => {}); }
+      updateSaveAllLabel();
+      toast('If you chose “Save Images”, they’re in your gallery');
+    } catch (e) { /* user closed the share sheet */ }
+  } else {
+    toast('Too many photos to share at once — use ⬇︎ ZIP instead', true);
+  }
+};
 
-/* ================= Viewer ================= */
+/* ================= Viewer (pinch zoom) ================= */
 let viewURL = null, vz = 1, vx = 0, vy = 0;
 let vPinchDist = 0, vzStart = 1, vPanStart = null, lastTap = 0;
 const viewImg = $('viewImg');
+
 function applyView() { viewImg.style.transform = `translate(${vx}px, ${vy}px) scale(${vz})`; }
 function resetView() { vz = 1; vx = 0; vy = 0; applyView(); }
+
 function openViewer(id) {
-  const p = photos.find(x => x.id === id); if (!p) return;
+  const p = photos.find(x => x.id === id);
+  if (!p) return;
   viewingId = id;
   if (viewURL) URL.revokeObjectURL(viewURL);
-  viewURL = URL.createObjectURL(p.blob); viewImg.src = viewURL;
-  resetView(); renderViewMeta(p);
-  $('viewNoteEdit').style.display = 'none'; $('viewNote').style.display = '';
+  viewURL = URL.createObjectURL(p.blob);
+  viewImg.src = viewURL;
+  resetView();
+  renderViewMeta(p);
+  $('viewNoteEdit').style.display = 'none';
+  $('viewNote').style.display = '';
   show('viewScreen');
 }
 function renderViewMeta(p) {
-  const badge = p.cat === 'defect' ? '<span class="badge" style="color:#F87171">🔴 DEFECT</span>' : '<span class="badge" style="color:#60A5FA">🔵 GENERAL</span>';
-  const req = p.requiredLabel ? `<div style="color:#FCD34D;font-size:13px;margin-top:4px">Required: ${escapeHTML(p.requiredLabel)}</div>` : '';
-  $('viewNote').innerHTML = badge + escapeHTML(p.note || 'No note') + `<div style="color:#93A3BC;font-size:13px;margin-top:4px">${escapeHTML(p.area || '')}</div>` + req + `<div style="color:#5B6B84;font-size:12px;margin-top:4px">${new Date(p.ts).toLocaleString()}</div>`;
+  const badge = p.cat === 'defect'
+    ? '<span class="badge" style="color:#F87171">🔴 DEFECT</span>'
+    : '<span class="badge" style="color:#60A5FA">🔵 GENERAL</span>';
+  $('viewNote').innerHTML = badge + escapeHTML(p.note || 'No note') +
+    `<div style="color:#5B6B84;font-size:12px;margin-top:4px">${new Date(p.ts).toLocaleString()}</div>`;
   $('viewMove').textContent = p.cat === 'defect' ? '→ General' : '→ Defects';
 }
 $('viewClose').onclick = () => { show('galleryScreen'); renderGrid(); updateCounts(); };
 $('viewDelete').onclick = async () => {
   if (!confirm('Delete this photo?')) return;
-  await dbDelPhoto(viewingId);
-  allPhotos = allPhotos.filter(p => p.id !== viewingId); photos = photos.filter(p => p.id !== viewingId);
-  toast('Photo deleted'); show('galleryScreen'); renderGrid(); updateCounts(); renderLibrary();
+  await dbDel(viewingId);
+  photos = photos.filter(p => p.id !== viewingId);
+  toast('Photo deleted');
+  show('galleryScreen'); renderGrid(); updateCounts();
 };
-$('viewMove').onclick = async () => { const p = photos.find(x => x.id === viewingId); p.cat = p.cat === 'defect' ? 'general' : 'defect'; await dbPutPhoto(p); renderViewMeta(p); updateCounts(); toast('Moved'); };
+$('viewMove').onclick = async () => {
+  const p = photos.find(x => x.id === viewingId);
+  p.cat = p.cat === 'defect' ? 'general' : 'defect';
+  await dbPut(p);
+  renderViewMeta(p);
+  toast(`Moved to ${p.cat === 'defect' ? 'Defects' : 'General'}`);
+};
 $('viewEdit').onclick = async () => {
-  const p = photos.find(x => x.id === viewingId); const ta = $('viewNoteEdit');
-  if (ta.style.display === 'none') { ta.value = p.note || ''; ta.style.display = 'block'; $('viewNote').style.display = 'none'; $('viewEdit').textContent = 'Save Note'; ta.focus(); }
-  else { p.note = ta.value.trim(); await dbPutPhoto(p); ta.style.display = 'none'; $('viewNote').style.display = ''; $('viewEdit').textContent = 'Edit Note'; renderViewMeta(p); renderGrid(); toast('Note updated'); }
-};
-$('viewShare').onclick = async () => { const p = photos.find(x => x.id === viewingId); await sharePhotosToPhone([p], phoneFileName(p)); };
-const vw2 = $('viewWrap');
-const dist2 = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
-vw2.addEventListener('touchstart', e => {
-  if (e.touches.length === 2) { vPinchDist = dist2(e.touches); vzStart = vz; vPanStart = null; }
-  else if (e.touches.length === 1) { const now = Date.now(); if (now - lastTap < 300) { if (vz > 1) resetView(); else { vz = 2.5; applyView(); } } lastTap = now; vPanStart = { x:e.touches[0].clientX - vx, y:e.touches[0].clientY - vy }; }
-});
-vw2.addEventListener('touchmove', e => { e.preventDefault(); if (e.touches.length === 2 && vPinchDist > 0) { vz = Math.min(6, Math.max(1, vzStart * dist2(e.touches) / vPinchDist)); if (vz === 1) { vx=0; vy=0; } applyView(); } else if (e.touches.length === 1 && vPanStart && vz > 1) { vx = e.touches[0].clientX - vPanStart.x; vy = e.touches[0].clientY - vPanStart.y; applyView(); } }, { passive:false });
-
-/* ================= Export ================= */
-function sanitize(s) { return String(s || '').replace(/[\\/:*?"<>|#%{}$!'@+`=]/g, '').replace(/\s+/g, ' ').trim().slice(0, 70); }
-function fileNameFor(p, idx) {
-  const area = sanitize(p.area || 'Photo'); const note = sanitize(p.note || p.requiredLabel || 'photo');
-  return String(idx || 1).padStart(3, '0') + ' - ' + area + ' - ' + note + '.jpg';
-}
-function phoneFileName(p, idx) {
-  const label = p.cat === 'defect' ? 'Defect' : p.requiredLabel ? 'Required' : 'General';
-  const num = idx ? ' ' + String(idx).padStart(3,'0') : '';
-  return `${propLabel()} - ${sanitize(p.area || '')} - ${label}${num} - ${sanitize(p.note || 'photo')}.jpg`;
-}
-const CRC_TABLE = (() => { const t = new Uint32Array(256); for (let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); t[n]=c>>>0; } return t; })();
-function crc32(u8) { let c=0xFFFFFFFF; for(let i=0;i<u8.length;i++) c=CRC_TABLE[(c^u8[i])&0xFF]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
-function buildZip(files) {
-  const enc = new TextEncoder(); const parts=[], central=[]; let offset=0; const now=new Date();
-  const dosTime=(now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1); const dosDate=((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate();
-  for (const f of files) {
-    const name=enc.encode(f.name); const crc=crc32(f.data); const lh=new DataView(new ArrayBuffer(30));
-    lh.setUint32(0,0x04034b50,true); lh.setUint16(4,20,true); lh.setUint16(6,0x0800,true); lh.setUint16(8,0,true); lh.setUint16(10,dosTime,true); lh.setUint16(12,dosDate,true); lh.setUint32(14,crc,true); lh.setUint32(18,f.data.length,true); lh.setUint32(22,f.data.length,true); lh.setUint16(26,name.length,true); lh.setUint16(28,0,true);
-    parts.push(new Uint8Array(lh.buffer), name, f.data);
-    const ch=new DataView(new ArrayBuffer(46)); ch.setUint32(0,0x02014b50,true); ch.setUint16(4,20,true); ch.setUint16(6,20,true); ch.setUint16(8,0x0800,true); ch.setUint16(10,0,true); ch.setUint16(12,dosTime,true); ch.setUint16(14,dosDate,true); ch.setUint32(16,crc,true); ch.setUint32(20,f.data.length,true); ch.setUint32(24,f.data.length,true); ch.setUint16(28,name.length,true); ch.setUint32(42,offset,true);
-    central.push(new Uint8Array(ch.buffer), name); offset += 30 + name.length + f.data.length;
+  const p = photos.find(x => x.id === viewingId);
+  const ta = $('viewNoteEdit');
+  if (ta.style.display === 'none') {
+    ta.value = p.note || '';
+    ta.style.display = 'block';
+    $('viewNote').style.display = 'none';
+    $('viewEdit').textContent = 'Save Note';
+    ta.focus();
+  } else {
+    p.note = ta.value.trim();
+    await dbPut(p);
+    ta.style.display = 'none';
+    $('viewNote').style.display = '';
+    $('viewEdit').textContent = 'Edit Note';
+    renderViewMeta(p);
+    toast('Note updated');
   }
-  let cdSize=0; for (const c of central) cdSize += c.length;
-  const end=new DataView(new ArrayBuffer(22)); end.setUint32(0,0x06054b50,true); end.setUint16(8,files.length,true); end.setUint16(10,files.length,true); end.setUint32(12,cdSize,true); end.setUint32(16,offset,true);
-  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type:'application/zip' });
+};
+$('viewShare').onclick = async () => {
+  const p = photos.find(x => x.id === viewingId);
+  const file = new File([p.blob], fileNameFor(p, 1), { type: 'image/jpeg' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file] }); } catch (e) { /* user cancelled */ }
+  } else {
+    downloadBlob(p.blob, file.name);
+  }
+};
+
+/* pinch zoom / pan / double-tap in the viewer */
+const vw2 = $('viewWrap');
+vw2.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    vPinchDist = dist(e.touches); vzStart = vz; vPanStart = null;
+  } else if (e.touches.length === 1) {
+    const now = Date.now();
+    if (now - lastTap < 300) {                       // double tap: toggle zoom
+      if (vz > 1) resetView(); else { vz = 2.5; applyView(); }
+    }
+    lastTap = now;
+    vPanStart = { x: e.touches[0].clientX - vx, y: e.touches[0].clientY - vy };
+  }
+});
+vw2.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 2 && vPinchDist > 0) {
+    vz = Math.min(6, Math.max(1, vzStart * dist(e.touches) / vPinchDist));
+    if (vz === 1) { vx = 0; vy = 0; }
+    applyView();
+  } else if (e.touches.length === 1 && vPanStart && vz > 1) {
+    vx = e.touches[0].clientX - vPanStart.x;
+    vy = e.touches[0].clientY - vPanStart.y;
+    applyView();
+  }
+}, { passive: false });
+
+/* ================= Export (ZIP with two folders) ================= */
+function sanitize(s) {
+  return (s || '').replace(/[\\/:*?"<>|#%{}$!'@+`=]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
 }
-function downloadBlob(blob, name) { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},4000); }
+function fileNameFor(p, idx) {
+  const n = sanitize(p.note) || 'photo';
+  return String(idx).padStart(3, '0') + ' - ' + n + '.jpg';
+}
+const CRC_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+function crc32(u8) {
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < u8.length; i++) c = CRC_TABLE[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+/* minimal ZIP writer (files stored uncompressed — JPEGs are already compressed) */
+function buildZip(files) {
+  const enc = new TextEncoder();
+  const parts = [], central = [];
+  let offset = 0;
+  const now = new Date();
+  const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+  const dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+  for (const f of files) {
+    const name = enc.encode(f.name);
+    const crc = crc32(f.data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true);
+    lh.setUint16(8, 0, true); lh.setUint16(10, dosTime, true); lh.setUint16(12, dosDate, true);
+    lh.setUint32(14, crc, true); lh.setUint32(18, f.data.length, true); lh.setUint32(22, f.data.length, true);
+    lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), name, f.data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true);
+    ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, dosTime, true);
+    ch.setUint16(14, dosDate, true); ch.setUint32(16, crc, true);
+    ch.setUint32(20, f.data.length, true); ch.setUint32(24, f.data.length, true);
+    ch.setUint16(28, name.length, true); ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), name);
+    offset += 30 + name.length + f.data.length;
+  }
+  let cdSize = 0;
+  for (const c of central) cdSize += c.length;
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true);
+  end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+  end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type: 'application/zip' });
+}
+function downloadBlob(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+}
 $('exportBtn').onclick = async () => {
-  if (!activeInspection || !photos.length) { toast('No photos to export', true); return; }
+  if (!photos.length) { toast('No photos to export', true); return; }
   $('exportBtn').textContent = 'Building…';
   try {
-    const prop = propLabel(); const dateStr = new Date().toISOString().slice(0,10); const files=[];
-    let report = `INSPECTION — ${activeInspection.address}\nDate: ${new Date().toLocaleString()}\nPhotos: ${photos.length}\n\n`;
-    const addList = async (folder, list) => { let i=1; for (const p of list) { const fname=fileNameFor(p,i++); files.push({ name: folder + '/' + fname, data:new Uint8Array(await p.blob.arrayBuffer()) }); } };
-    const defects = photos.filter(p => p.cat === 'defect').sort((a,b)=>a.ts-b.ts);
-    const generals = photos.filter(p => p.cat !== 'defect').sort((a,b)=>a.ts-b.ts);
-    await addList('Defects', defects); await addList('General Photos', generals);
-    for (const group of REQUIRED_GROUPS) {
-      const req = photos.filter(p => p.requiredGroup === group.id).sort((a,b)=>a.ts-b.ts);
-      if (req.length) await addList(group.title + ' Required', req);
+    const prop = sanitize($('propName').value) || 'Inspection';
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const files = [];
+    let report = `INSPECTION REPORT — ${prop}\nDate: ${new Date().toLocaleString()}\n`;
+    for (const [folder, cat, label] of [['Defects', 'defect', 'DEFECTS'], ['General Photos', 'general', 'GENERAL PHOTOS']]) {
+      const list = photos.filter(p => p.cat === cat).sort((a, b) => a.ts - b.ts);
+      report += `\n========== ${label} (${list.length}) ==========\n`;
+      let i = 1;
+      for (const p of list) {
+        const fname = fileNameFor(p, i);
+        files.push({ name: folder + '/' + fname, data: new Uint8Array(await p.blob.arrayBuffer()) });
+        report += `${String(i).padStart(3, '0')}. ${p.note || '(no note)'}  [${new Date(p.ts).toLocaleString()}]\n`;
+        i++;
+      }
     }
-    report += `DEFECTS (${defects.length})\n`;
-    defects.forEach((p,i)=> report += `${String(i+1).padStart(3,'0')}. ${p.area || ''} — ${p.note || ''} [${new Date(p.ts).toLocaleString()}]\n`);
-    report += `\nGENERAL (${generals.length})\n`;
-    generals.forEach((p,i)=> report += `${String(i+1).padStart(3,'0')}. ${p.area || ''} — ${p.note || ''}${p.requiredLabel ? ' — Required: '+p.requiredLabel : ''}\n`);
-    report += `\nMISSING REQUIRED\n`;
-    REQUIRED_ITEMS.filter(i => !activeInspection.checklist?.[i.id]).forEach(i => report += `- ${i.groupTitle}: ${i.label}\n`);
-    files.push({ name:'Report Notes.txt', data:new TextEncoder().encode(report) });
-    const zip = buildZip(files); const zipName = `${prop} - ${dateStr}.zip`; const zipFile = new File([zip], zipName, { type:'application/zip' });
-    if (navigator.canShare && navigator.canShare({ files:[zipFile] })) { try { await navigator.share({ files:[zipFile], title:zipName }); } catch(e) {} }
-    else downloadBlob(zip, zipName);
-  } catch(e) { toast('Export failed: ' + e.message, true); }
-  $('exportBtn').textContent = '⬇︎ Export ZIP';
+    files.push({ name: 'report.txt', data: new TextEncoder().encode(report) });
+    const zip = buildZip(files);
+    const zipName = `${prop} - ${dateStr}.zip`;
+    const zipFile = new File([zip], zipName, { type: 'application/zip' });
+    if (navigator.canShare && navigator.canShare({ files: [zipFile] })) {
+      try { await navigator.share({ files: [zipFile], title: zipName }); }
+      catch (e) { /* user cancelled the share sheet */ }
+    } else {
+      downloadBlob(zip, zipName);
+    }
+  } catch (e) {
+    toast('Export failed: ' + e.message, true);
+  }
+  $('exportBtn').textContent = '⬇︎ ZIP';
 };
+
+/* ================= Drive Sync ================= */
+// Google Drive OAuth client ID obtained from Google Cloud
+const CLIENT_ID = '785011600208-7n60n10vpb9drt3fnur31ap111rgjkhh.apps.googleusercontent.com';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+let tokenClient;
+let driveAccessToken = null;
+let driveConnected = false;
+
+// Initialize the token client when needed
+function initDriveOAuth() {
+  if (tokenClient) return;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: DRIVE_SCOPE,
+    callback: (tokenResponse) => {
+      driveAccessToken = tokenResponse.access_token;
+      driveConnected = true;
+      // Update UI: change button label and disable sign-in
+      const btn = $('googleDriveBtn');
+      if (btn) {
+        btn.textContent = 'Drive ✓';
+        btn.disabled = true;
+        btn.style.opacity = 0.7;
+      }
+      toast('Drive connected');
+    }
+  });
+}
+
+function connectDrive() {
+  initDriveOAuth();
+  // Request access token; avoid popup if already granted
+  tokenClient.requestAccessToken({ prompt: '' });
+}
+
+async function createDriveFolder(name, parentId = null) {
+  const metadata = { name: name, mimeType: 'application/vnd.google-apps.folder' };
+  if (parentId) metadata.parents = [parentId];
+  const res = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + driveAccessToken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(metadata)
+  });
+  const data = await res.json();
+  return data.id;
+}
+
+async function uploadBlobToDrive(blob, fileName, parentId) {
+  const metadata = { name: fileName, parents: [parentId] };
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+  form.append('file', blob);
+  const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + driveAccessToken
+    },
+    body: form
+  });
+  return await res.json();
+}
+
+async function backupToDrive() {
+  try {
+    if (!driveConnected) {
+      toast('Please connect to Drive first', true);
+      return;
+    }
+    const propRaw = (localStorage.getItem('propName') || 'Inspection').trim();
+    const propName = propRaw || 'Inspection';
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const mainFolderId = await createDriveFolder(`${propName} - ${dateStr}`);
+    const defectFolderId = await createDriveFolder('Defects', mainFolderId);
+    const generalFolderId = await createDriveFolder('General Photos', mainFolderId);
+    let iDef = 1, iGen = 1;
+    for (const p of photos) {
+      const idx = p.cat === 'defect' ? iDef : iGen;
+      const notePart = (p.note || (p.cat === 'defect' ? 'defect' : 'general')).replace(/[^\w\s-]/g, '').trim() || (p.cat === 'defect' ? 'defect' : 'general');
+      const fname = `${String(idx).padStart(3, '0')} - ${notePart}.jpg`;
+      const folderId = p.cat === 'defect' ? defectFolderId : generalFolderId;
+      await uploadBlobToDrive(p.blob, fname, folderId);
+      if (p.cat === 'defect') iDef++; else iGen++;
+    }
+    toast('Backup to Drive complete');
+  } catch (e) {
+    toast('Drive backup failed: ' + (e && e.message ? e.message : e), true);
+  }
+}
+
+// Attach event handlers for Drive buttons once DOM is ready
+window.addEventListener('DOMContentLoaded', () => {
+  const driveBtn = $('googleDriveBtn');
+  if (driveBtn) driveBtn.onclick = connectDrive;
+  const backupBtn = $('driveBackupBtn');
+  if (backupBtn) backupBtn.onclick = backupToDrive;
+});
+
 
 /* ================= Boot ================= */
 (async function init() {
   $('ver').textContent = APP_VERSION;
   await openDB();
-  if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
-  await loadAllData();
-  if (!activeInspection) { renderLibrary(); show('libraryScreen'); showAddrModal(); }
-  else { show('camScreen'); startCam(); }
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
+  photos = await dbAll();
+  updateCounts();
+  updateAddrLabel();
+  if (!photos.length && !(localStorage.getItem('propName') || '').trim()) showAddrModal();
+  startCam();
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
 })();
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && $('camScreen').classList.contains('active')) startCam();
   else if (document.visibilityState === 'hidden') stopCam();
 });
 </script>
-
 </body>
 </html>
