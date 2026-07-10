@@ -313,6 +313,119 @@
   #macReviewBtn { flex:1 1 100%; padding:15px 0; border-radius:14px; background:#111827; color:#E5EAF2; border:1px solid rgba(255,255,255,.12); font-size:14px; font-weight:900; }
   .doneBadge { display:inline-block; margin-top:8px; background:#14532D; color:#DCFCE7; border:1px solid #22C55E; padding:5px 9px; border-radius:999px; font-size:12px; font-weight:900; }
 
+
+  /* ---------- v15 Apple-inspired visual system ---------- */
+  :root {
+    color-scheme: dark;
+    --bg:#05080D; --panel:#0D131D; --panel-2:#121A26; --line:rgba(255,255,255,.10);
+    --text:#F5F7FA; --muted:#8D99AA; --gold:#FFB21A; --blue:#3B82F6;
+    --red:#FF453A; --green:#30D158; --glass:rgba(12,18,28,.72);
+    --shadow:0 18px 50px rgba(0,0,0,.35);
+  }
+  body { background:var(--bg); color:var(--text); letter-spacing:-.01em; }
+  button, input, textarea { -webkit-font-smoothing:antialiased; }
+  button { transition:transform .15s ease, opacity .15s ease, background .2s ease, border-color .2s ease; }
+  button:active { transform:scale(.97); }
+
+  .topbar {
+    min-height:58px; padding-left:16px; padding-right:16px;
+    background:rgba(5,8,13,.82); border-bottom:1px solid var(--line);
+    backdrop-filter:blur(24px) saturate(150%); -webkit-backdrop-filter:blur(24px) saturate(150%);
+  }
+  .topbar h2 { font-size:17px; font-weight:750; }
+  .topbar button.txt { color:var(--gold); font-size:15px; }
+
+  #camScreen { background:#000; }
+  #camWrap::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,.48) 0,transparent 20%,transparent 68%,rgba(0,0,0,.68) 100%);
+  }
+  #vid { filter:saturate(1.03) contrast(1.02); }
+  #camTop {
+    gap:8px; padding:calc(env(safe-area-inset-top) + 12px) 14px 16px;
+    background:linear-gradient(180deg,rgba(0,0,0,.72),transparent);
+  }
+  #camTop > div:first-child { flex:1; min-width:0; }
+  #camTop h1 { font-size:15px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; white-space:nowrap; }
+  #camTop h1 span { color:var(--gold); }
+  #ver { color:rgba(255,255,255,.38); font-size:10px; }
+  #addrLabel { color:var(--gold); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #areaLabel { color:rgba(255,255,255,.72); font-size:12px; }
+  .topBtn {
+    min-width:58px; padding:10px 11px; border-radius:999px;
+    background:rgba(20,25,34,.70); border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 8px 22px rgba(0,0,0,.22); backdrop-filter:blur(16px);
+  }
+  #driveBtn.topBtn { color:var(--gold); border-color:rgba(255,178,26,.28); }
+
+  #quickPanel { left:14px; right:14px; bottom:calc(env(safe-area-inset-bottom) + 174px); gap:10px; }
+  #areaBtn {
+    padding:13px 15px; border-radius:16px; background:rgba(14,20,29,.76);
+    border:1px solid rgba(255,255,255,.14); box-shadow:var(--shadow);
+    backdrop-filter:blur(20px) saturate(145%); font-size:14px;
+  }
+  #modeRow { padding:4px; gap:4px; border-radius:16px; background:rgba(10,15,22,.78); border:1px solid rgba(255,255,255,.11); backdrop-filter:blur(20px); }
+  .modeBtn { padding:11px 5px; border:0; border-radius:12px; background:transparent; color:var(--muted); font-size:12px; }
+  .modeBtn.sel[data-mode="general"] { background:rgba(59,130,246,.92); border:0; box-shadow:0 7px 18px rgba(59,130,246,.28); }
+  .modeBtn.sel[data-mode="defect"] { background:rgba(255,69,58,.92); border:0; box-shadow:0 7px 18px rgba(255,69,58,.26); }
+  .modeBtn.sel[data-mode="required"] { background:rgba(255,178,26,.94); color:#1A1200; border:0; box-shadow:0 7px 18px rgba(255,178,26,.24); }
+
+  #zoomChips { bottom:calc(env(safe-area-inset-bottom) + 128px); gap:4px; }
+  .chip { min-width:48px; height:38px; border-radius:999px; background:rgba(10,15,22,.72); border:0; color:#D8DEE8; backdrop-filter:blur(16px); }
+  .chip.sel { color:#111; background:var(--gold); border:0; transform:scale(1.05); box-shadow:0 6px 18px rgba(255,178,26,.28); }
+
+  #camBottom { padding:14px 22px calc(env(safe-area-inset-bottom) + 17px); }
+  #galleryBtn, #checkBtn {
+    width:84px; min-height:54px; border-radius:18px; background:rgba(14,20,29,.74);
+    border:1px solid rgba(255,255,255,.14); backdrop-filter:blur(18px); font-size:12px;
+  }
+  #shutter { width:76px; height:76px; border:4px solid rgba(255,255,255,.42); box-shadow:0 0 0 2px rgba(0,0,0,.38), 0 10px 28px rgba(0,0,0,.35); }
+
+  #focusReticle {
+    position:absolute; z-index:8; width:74px; height:74px; margin:-37px 0 0 -37px;
+    border:2px solid var(--gold); border-radius:18px; pointer-events:none; opacity:0;
+    box-shadow:0 0 0 1px rgba(0,0,0,.35), 0 0 22px rgba(255,178,26,.28);
+    transform:scale(1.25); transition:opacity .2s ease, transform .22s cubic-bezier(.2,.8,.2,1);
+  }
+  #focusReticle::before, #focusReticle::after { content:''; position:absolute; background:var(--gold); }
+  #focusReticle::before { width:18px; height:2px; left:26px; top:34px; }
+  #focusReticle::after { width:2px; height:18px; left:34px; top:26px; }
+  #focusReticle.show { opacity:1; transform:scale(1); }
+  #focusReticle.locked { border-color:var(--green); box-shadow:0 0 20px rgba(48,209,88,.25); }
+  #focusReticle.locked::before, #focusReticle.locked::after { background:var(--green); }
+  #focusTip {
+    position:absolute; z-index:7; left:50%; top:calc(env(safe-area-inset-top) + 92px); transform:translateX(-50%);
+    padding:7px 11px; border-radius:999px; background:rgba(0,0,0,.46); color:rgba(255,255,255,.82);
+    font-size:11px; font-weight:700; pointer-events:none; backdrop-filter:blur(12px);
+  }
+
+  #noteScreen, #galleryScreen, #libraryScreen { background:linear-gradient(180deg,#080C12,#05080D); }
+  #noteBody { padding:14px 16px 20px; gap:16px; }
+  #notePhoto { max-height:34vh; border-radius:22px; box-shadow:var(--shadow); }
+  .catRow { gap:10px; }
+  .catBtn { padding:18px 12px; border-radius:18px; background:var(--panel); border:1px solid var(--line); color:var(--muted); font-size:15px; }
+  #catDefect.sel { background:linear-gradient(145deg,rgba(130,22,22,.72),rgba(70,14,18,.88)); border-color:var(--red); }
+  #catGeneral.sel { background:linear-gradient(145deg,rgba(24,68,145,.78),rgba(16,36,74,.92)); border-color:var(--blue); }
+  #micBtn { width:92px; height:92px; background:radial-gradient(circle at 35% 30%,#263145,#111823); border:1px solid var(--line); box-shadow:0 18px 36px rgba(0,0,0,.3); }
+  #noteText, #propName, .miniInput, #viewNoteEdit { background:var(--panel); border:1px solid var(--line); border-radius:16px; }
+  #noteText:focus, #propName:focus, .miniInput:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(255,178,26,.12); }
+  #noteActions { background:rgba(5,8,13,.90); border-top:1px solid var(--line); backdrop-filter:blur(20px); }
+  #discardBtn, #saveBtn { border-radius:16px; }
+  #saveBtn { background:linear-gradient(180deg,#35C75A,#229440); }
+
+  #tabs { padding:12px 16px 10px; }
+  .tab { border-radius:14px; background:var(--panel); color:var(--muted); }
+  #tabDefects.sel { background:rgba(255,69,58,.88); }
+  #tabGeneral.sel { background:rgba(59,130,246,.88); }
+  #grid { grid-template-columns:repeat(2,1fr); gap:10px; padding:2px 14px 18px; }
+  .cell { border-radius:18px; border:1px solid var(--line); box-shadow:0 12px 30px rgba(0,0,0,.25); }
+  .jobCard, .checkCard { background:var(--panel); border:1px solid var(--line); border-radius:20px; }
+  .jobBtns button, #categorySaveRow button, #galleryFooter button, #viewBtns button { border-radius:14px; background:var(--panel-2); border:1px solid var(--line); }
+  #exportBtn { background:var(--gold)!important; color:#1A1200!important; border-color:transparent!important; }
+  #driveBackupBtn { background:#23395F!important; }
+  #macReviewBtn { background:#161D28; }
+  .sheet { border-radius:28px 28px 0 0; background:linear-gradient(180deg,#151D29,#0A1018); }
+
 </style>
 </head>
 <body>
@@ -322,6 +435,8 @@
   <div id="camWrap">
     <video id="vid" autoplay playsinline muted></video>
     <div id="flash"></div>
+    <div id="focusReticle" aria-hidden="true"></div>
+    <div id="focusTip">Tap an object to focus</div>
   </div>
   <div id="camHint">
     <div style="font-size:44px">📷</div>
@@ -481,7 +596,7 @@
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
-const APP_VERSION = 'v14';
+const APP_VERSION = 'v15';
 // Google Drive OAuth client ID. Obtained from Google Cloud console for this app.
 const CLIENT_ID = '785011600208-7n60n10vpb9drt3fnur31ap111rgjkhh.apps.googleusercontent.com';
 // Drive OAuth state: access token and connection flag
@@ -864,6 +979,59 @@ $('chipOne').onclick   = () => setEff(1);
 $('chipThree').onclick = () => setEff(3);
 
 /* tap the viewfinder: start the camera if it isn't running, resume if paused */
+let focusHideTimer = null;
+async function focusAt(clientX, clientY) {
+  const wrap = $('camWrap');
+  const reticle = $('focusReticle');
+  const rect = wrap.getBoundingClientRect();
+  const x = clamp(clientX - rect.left, 0, rect.width);
+  const y = clamp(clientY - rect.top, 0, rect.height);
+  reticle.style.left = x + 'px';
+  reticle.style.top = y + 'px';
+  reticle.classList.remove('locked');
+  reticle.classList.add('show');
+  clearTimeout(focusHideTimer);
+
+  if (!stream || !videoTrack) {
+    if (!camStarting) startCam();
+    focusHideTimer = setTimeout(() => reticle.classList.remove('show'), 900);
+    return;
+  }
+  if (vid.paused) vid.play().catch(() => {});
+
+  // Coordinates are normalized for browsers that expose point-of-interest focus.
+  const point = { x: rect.width ? x / rect.width : .5, y: rect.height ? y / rect.height : .5 };
+  const caps = videoTrack.getCapabilities ? videoTrack.getCapabilities() : {};
+  const attempts = [];
+  if (caps.pointsOfInterest || caps.focusMode) {
+    attempts.push({ advanced:[{ pointsOfInterest:[point], focusMode:'single-shot' }] });
+    attempts.push({ advanced:[{ pointsOfInterest:[point], focusMode:'continuous' }] });
+    attempts.push({ advanced:[{ focusMode:'single-shot' }] });
+  }
+  let applied = false;
+  for (const constraints of attempts) {
+    try { await videoTrack.applyConstraints(constraints); applied = true; break; }
+    catch (e) { /* Browser or camera does not expose manual focus. */ }
+  }
+  // Even when manual point focus is unavailable, the reticle gives clear feedback;
+  // iPhone Safari continues using its native continuous autofocus.
+  if (applied) reticle.classList.add('locked');
+  focusHideTimer = setTimeout(() => reticle.classList.remove('show','locked'), applied ? 1200 : 850);
+}
+
+let focusPointerStart = null;
+$('camWrap').addEventListener('pointerdown', e => {
+  if (e.pointerType === 'touch' && e.isPrimary === false) return;
+  focusPointerStart = { x:e.clientX, y:e.clientY, t:Date.now() };
+});
+$('camWrap').addEventListener('pointerup', e => {
+  if (!focusPointerStart) return;
+  const moved = Math.hypot(e.clientX-focusPointerStart.x, e.clientY-focusPointerStart.y);
+  const elapsed = Date.now()-focusPointerStart.t;
+  focusPointerStart = null;
+  if (moved < 12 && elapsed < 700) focusAt(e.clientX, e.clientY);
+});
+$('camWrap').addEventListener('pointercancel', () => { focusPointerStart = null; });
 $('camWrap').addEventListener('click', () => {
   if (!stream && !camStarting) startCam();
   else if (vid.paused) vid.play().catch(() => {});
