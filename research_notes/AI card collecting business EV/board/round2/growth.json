@@ -1,0 +1,50 @@
+{
+  "seat": "growth",
+  "top3": ["business-2", "growth-1", "business-1"],
+  "kills": [
+    {
+      "id": "marketing-2",
+      "flaw": "The paid-social math has no room. A $55 gross margin per order against a ~$38 median Meta cost per purchase leaves about $17. There are no repeat buyers, because a gift is a one-off. Gift search volume is tiny (~1,300/mo), and Pokemon trademark limits on ad creative take away the one hook that would make it spread. Every order is a rented customer, and anyone can copy the offer in a week."
+    },
+    {
+      "id": "business-mind-3",
+      "flaw": "As a standalone business it fails the mission by its own math (~$1.5-2k/mo net at month 12). It has no loop: affluent 50+ collectors are slow and expensive to reach, and the payoff is years out. Keep the heir-letter idea as a free feature inside the collection desk, not as its own business."
+    }
+  ],
+  "upgrades": [
+    {
+      "id": "business-2",
+      "upgrade": "Add the loops so paid search stops being the only engine. (1) Make every triage/estimate a branded share link with a 'send to your siblings' button. Inherited collections are decided by several heirs, so one lead turns into 2-4 people who see the brand. (2) Pay estate-sale companies and senior move managers a two-sided reward: a 5-10% finder's fee to them and a free report for their client. That turns one partner into a repeat lead source. (3) Turn each closed deal (with seller permission, anonymized) into a public 'what this attic box was worth' case page. That gives programmatic SEO plus social proof, and it lowers blended CAC every month. (4) Make the refer-out partner shops reciprocal: they send their overflow vintage leads back."
+    },
+    {
+      "id": "business-1",
+      "upgrade": "Treat each vendor as a distribution node. Give every vendor a referral link (bring a vendor, get $25 off your table) and a pre-made promo graphic and clip tagged with their name for their own Whatnot/IG/TikTok audiences. Collect every attendee's SMS/email at the door for the next show. List free on thecardshopfinder, TreasureHunter and local FB groups. Run a 'Free collection appraisal' booth staffed by the desk, so the show doubles as the collection desk's local storefront and lead source."
+    },
+    {
+      "id": "demand-2",
+      "upgrade": "Cross-loop it with the collection desk. The parents and grandparents who buy these gift bundles are exactly the people holding old shoeboxes. Put a QR insert in every box: 'Got old cards in the attic? Free 24-hour appraisal.' The bundle then becomes both the bulk outlet and a paid-for flyer for the buy side. Add TikTok Shop with commission-only creators to ride the platform where cards are ~81% of collectibles sales."
+    },
+    {
+      "id": "marketing-1",
+      "upgrade": "'Show the receipts' is the best closer on the board. Make the receipts report the shareable artifact: a clean one-page 'here is what every key card actually sold for' that sellers forward and post. Ask for a Google review right after payout, because local-pack ranking compounds and buys organic 'near me' clicks you don't pay for."
+    },
+    {
+      "id": "business-mind-1",
+      "upgrade": "Add a review and referral loop at the moment of highest trust (payout): 'Know anyone else cleaning out a parent's house? $50 for any referral we buy.' Publish the transparency report format as a free downloadable 'How to not get lowballed on inherited cards' guide. It ranks for the informational queries, and the people who download it become leads."
+    },
+    {
+      "id": "arbitrage-1",
+      "upgrade": "Make the fee-leak calculator public and shareable: 'I was leaking $X/mo to eBay ads' result cards that sellers post in Discords and r/Flipping. Every result card carries the brand and a link, so the lead magnet spreads itself through seller communities."
+    },
+    {
+      "id": "first-principles-3",
+      "upgrade": "Don't launch it standalone. Run it as the overflow valve of the collection desk: out-of-radius and over-bankroll leads become packets for vetted dealers. Then every ad click gets monetized and the desk can bid more on CPC than single-metro competitors."
+    },
+    {
+      "id": "mindset-1",
+      "upgrade": "Add a content loop to the outreach: publish a free monthly 'Card Accessories on Amazon' category report (top ASINs, ad share-of-voice, review gaps). Brand founders share it inside a small industry, so it brings inbound leads, not cold pitches."
+    }
+  ],
+  "combo": "The Collection Desk with built-in loops. Engine: business-2's route-every-lead desk (buy / consign / refer / decline) fed by the user's Google Search skill on day 1 ($1-5 CPC seller-intent terms). Closer: marketing-1's 'show the receipts' report, made shareable to co-heirs (growth-1). Loops that cut CAC over time: an estate-company and move-manager two-sided finder's fee (growth-1, arbitrage-2, demand-3), public anonymized case pages as programmatic SEO (growth-1, leverage-1), and payout-moment referrals and reviews (business-mind-1). Bulk outlet and a second loop: demand-2 Q4 gift bundles with an 'appraise grandpa's cards' QR insert. Overflow: first-principles-3 packets to vetted dealers. Months 4-6: add business-1's monthly show as the desk's local storefront and appraisal booth. Shared kill rule: cost per qualified lead under $150 and realized margin of at least 25% by day 60, with the bankroll capped per mindset-2.",
+  "message": "Nine of us found the same profit pool, so the real question is distribution: whichever variant keeps every lead monetized and makes CAC fall over time wins. Paid search alone rents sellers; the co-heir share link, estate-partner finder's fees and public case pages are what make it compound. My own Naruto hub (growth-3) is a cheap option, not the move. It earns nothing before month 10, so don't let it pull hours from the desk. Measure one number weekly: share of leads that came from non-paid sources. If it's not climbing past 30% by month 6, we built an ad arbitrage, not a business."
+}

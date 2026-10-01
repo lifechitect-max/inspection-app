@@ -1,0 +1,62 @@
+{
+  "seat": "marketing",
+  "top3": ["business-mind-1", "growth-1", "arbitrage-1"],
+  "kills": [
+    {
+      "id": "marketing-2",
+      "flaw": "I'm killing my own idea. It is a paid-social business whose core message can't run in the ad. Meta's ad policy bars trademarks in ads and on landing pages without permission, so 'his childhood Pokémon' becomes 'a vintage graded card', and the hook is gone. Meta's median cost per purchase is about $38 against a $55 gross margin, and gift search volume is tiny (about 1,300 a month), so there is no cheap search channel to fall back on."
+    },
+    {
+      "id": "business-mind-3",
+      "flaw": "Selling a $249 catalog to collectors aged 50+ through Meta ads and attorneys has an unproven, likely higher-than-$249 cost to win a customer. The author's own math says about $1.5-2k a month at month 12, with the payoff years out. It cannot meet the mission. Keep it only as a later upsell inside the collection desk, not as a move."
+    },
+    {
+      "id": "arbitrage-3",
+      "flaw": "This is the weakest of the three shop-listing variants. At about $300 per shop per month it needs 12+ shops won face to face. Its core action is repricing stale stock down to where it sells, and that cuts the client's own margin, so the client turns on you. Card Dealer Pro at $9-59 a month sets the price anchor shops will compare against."
+    }
+  ],
+  "upgrades": [
+    {
+      "id": "business-mind-1",
+      "upgrade": "Turn the two side-by-side offers into a full Grand Slam offer. Headline: 'Two offers in 24 hours, with every key card's real sold price shown. Take cash today, consign for more, or keep the report free.' Add a risk reversal: 'Get a higher written offer within 7 days and we'll match it, or you keep the report.' Add business-2's third route: refer the junk-wax and out-of-area leads to partner shops for a 10% fee, so every lead pays. Build proof with real receipts: publish anonymized deal sheets (what was in the box, what we paid, how the math worked)."
+    },
+    {
+      "id": "growth-1",
+      "upgrade": "Don't wait on programmatic SEO for the first 90 days. It competes with thecardshopfinder, underpriced.app and others, and it is slow. Lead with Google search on qualified intent terms and the liquidator channel, and let the pages compound in the background. Make the shareable report itself the ad: every report carries the offer, a 'forward this to whoever else got Grandpa's cards' line and a referral credit. The honest 'it's mostly bulk, here are the 3 cards worth keeping' verdict is the trust stunt. Clip it as short-form content."
+    },
+    {
+      "id": "arbitrage-1",
+      "upgrade": "Lead with the confirmed Jan 13, 2026 attribution change and frame it as a loss: 'Since January, eBay charges you an ad fee whenever ANY buyer clicked your listing in the last 30 days. Upload your CSV and see what you paid for sales you'd have made anyway.' The free calculator is the front door. Price as pure risk reversal: 25% of verified savings for the first 60 days, then a flat retainer for titles, item specifics and Whatnot Boost. Prospect from public eBay store pages for card sellers above $30k a month in GMV."
+    },
+    {
+      "id": "business-2",
+      "upgrade": "Don't buy broad 'sell pokemon cards near me' traffic. Most of its 8,100 searches a month are kids' modern binders. Build ad groups and creative around qualifiers like old, vintage, inherited, 1990s, WOTC, 1st edition and 'dad's cards', and add strong negatives for modern sets. Lead quality is the whole P&L, so write the copy to the seller you want, not the seller you'll get."
+    },
+    {
+      "id": "first-principles-1",
+      "upgrade": "'We pay more' is the only positioning in the desk cluster that names an enemy (the lowballing dealer), so make it specific and claim it first: 'We pay 60% of recent sold prices. Most dealers pay 40%. Here's the math.' Test it head-to-head in ads against the transparency angle and let cost per qualified lead decide."
+    },
+    {
+      "id": "mindset-1",
+      "upgrade": "Build the prospect list from AdWhispr's verified active advertisers in sleeves, binders and slab storage. A brand already spending on ads is a qualified buyer, and one that isn't is a cold pitch. Open with a specific outside-in audit that has one number in the subject line ('Your top binder ASIN loses its top-of-search slot to Vault X on 6 of 10 terms')."
+    },
+    {
+      "id": "business-1",
+      "upgrade": "Put a 'Free AI appraisal booth, bring your shoebox' line in every show ad. It draws non-hobbyist attendees, and it feeds the collection desk at zero cost. Sell vendor tables with ad proof ('we spent $X to put 400 buyers in the room, and here's last show's door count'). That lets you raise table prices and build a waitlist."
+    },
+    {
+      "id": "demand-2",
+      "upgrade": "Make the 'no-duplicate guarantee plus a photo of the exact contents' the headline, since it answers the top complaint in competitor reviews. Sell on eBay and Etsy search, where gift intent already exists, rather than Meta. Keep trademarks out of the ad copy and use factual descriptions only. Source the bulk from the collection desk so the bundle margin turns junk wax into profit."
+    },
+    {
+      "id": "first-principles-3",
+      "upgrade": "Merge this with business-mind-2 and marketing-3 into one overflow route of the desk, not a standalone lead business. Charge a 7-10% finder's fee on closed deals rather than per lead. That ends 'your leads are junk' disputes and lines up incentives with the dealer."
+    },
+    {
+      "id": "demand-3",
+      "upgrade": "Make the report free. Dealers appraise for free, so a $149-499 fee is a 'no' at the first call. Earn on finder's fees and desk buys, and use the free 48-hour report as the liquidator's two-sided reward from growth-1."
+    }
+  ],
+  "combo": "THE RECEIPTS DESK. Core: business-mind-1's transparent two-offer desk (cash at 50-65% or consignment, with an itemized comps report) under one hook: 'Find out what your old cards are worth in 24 hours, with every sold price shown. Then pick: cash today, consign for more, or keep the report free.' Attention engine: growth-1's free photo triage, its shareable report and its two-sided liquidator reward, plus business-2's qualifier-targeted Google search (vintage, inherited, WOTC; no broad modern-Pokémon terms). Every lead pays through business-2's buy/consign/refer routing. Refer is where business-mind-2, first-principles-3 and marketing-3 fold in, paid as a finder's fee on close. Guardrails: mindset-2's $8k bankroll cap and day-90 kill rule, cert checks on every slab, and no unslabbed high-end buys. Outlets: Fanatics Collect for graded cards, and demand-2's no-duplicate Q4 bundles for the bulk. Run arbitrage-1 (the eBay/Whatnot fee-leak desk) alongside it from week 1 as zero-capital, home-skill cash flow; its seller clients later become wholesale buyers for desk inventory.",
+  "message": "Nine of us found the same profit pool, so the vote should be about whose offer wins it. The winner is the desk whose offer makes a nervous heir feel stupid saying no: show the receipts, give two offers, make the report free, and refer out the junk instead of ghosting it. I'm voting against my own gift idea, because Meta won't let us say the word that sells it. Lead the desk with cost per qualified lead as the only metric for the first $1,500, and run the fee-leak desk alongside it so the user earns from his home skill while the buy side proves itself."
+}

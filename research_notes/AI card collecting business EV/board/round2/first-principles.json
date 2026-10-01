@@ -1,0 +1,66 @@
+{
+  "seat": "first-principles",
+  "top3": ["business-2", "business-1", "leverage-1"],
+  "kills": [
+    {
+      "id": "growth-3",
+      "flaw": "Revenue only arrives after month 10, so it fails the 12-month mission by design. It earns from ad RPM and SEO traffic on informational queries, which is the one revenue model AI answer engines are collapsing, so it gets worse as AI gets better. Its own text admits there is no information lag (the launch is simultaneous worldwide), and Bandai can ship an official database that zeroes out the hub."
+    },
+    {
+      "id": "marketing-2",
+      "flaw": "The whole margin is a bet against Meta's median CAC. The plan has $55 of gross margin per order and a $38 median cost per purchase, which leaves about $17 net. Hitting the goal needs 250+ orders a month outside Q4, which the plan itself calls unlikely. The product is a price-transparent commodity: a PSA 8 base common is $20-55 and one search away. Pokemon trademark limits on ad creative also cap the angle that would lower CAC."
+    }
+  ],
+  "upgrades": [
+    {
+      "id": "business-2",
+      "upgrade": "Charge the refer route a flat fee per qualified lead ($75-100, verified by the shop) instead of a 10% finder's fee on closed deals. You can't audit a shop's close, so you can't reliably collect a finder's fee. Add the Show Runner door table (business-1) as a lead source with no ad cost, and send junk-wax leads into a bulk/bundle outlet (demand-2) so the most common lead type still earns money."
+    },
+    {
+      "id": "leverage-1",
+      "upgrade": "Make consignment the default for any lot worth more than about 25% of the bankroll. That removes the capital ceiling, which is the real limit at month 12, and caps fraud and price-drift exposure on big lots. Run the $1k ad test with qualified-lead cost (photos plus at least $750 of real value) as the only metric that matters. Cost per raw lead tells you nothing here."
+    },
+    {
+      "id": "business-1",
+      "upgrade": "Before signing any venue, have Claude map every show within 60 miles and check vendor overlap. Then run the refundable pre-sale exactly as written, so the riskiest guess (table demand in this metro) is tested with about $0 at risk. Put a 'free collection check' booth by the door. That turns attendees into business-2 supply and makes the show the exit channel for the desk's mid-tier inventory."
+    },
+    {
+      "id": "marketing-1",
+      "upgrade": "Don't hand out the card-by-card comp sheet before an offer is accepted. Free AI appraisal tools aimed at heirs already exist (HeirLoupe, plus many scanner apps), so the itemized report is no moat. What it does is give the seller the exact information your spread is paid for, and they can then shop it to Card Conduit at about 70%. Show the method and a value band up front. Itemize after acceptance, or as part of the consignment path."
+    },
+    {
+      "id": "business-mind-1",
+      "upgrade": "Two offers side by side is the right structure. Present the cash price as a convenience and speed fee for taking work and risk off the seller, not as a discount for what they don't know. The ignorance half of the spread is shrinking as consumer AI appraisal spreads. The hassle half (sorting 3,000 cards, listing, fees, fraud risk, waiting for buyers) is not, so price the offer on that."
+    },
+    {
+      "id": "growth-1",
+      "upgrade": "Make the liquidator finder's-fee loop the main engine and drop programmatic SEO as a lead source. 'What are my 1989 cards worth' is an informational query that AI Overviews now answer on the results page, so 2,000 template pages will draw little traffic."
+    },
+    {
+      "id": "demand-1",
+      "upgrade": "The pairing with demand-2 is the strongest answer on the board to junk-wax adverse selection. Price it into the offer: quote bulk at bundle-input value ($8-10/1,000) so junk leads still clear a small profit. Then you can say yes to more sellers, and that drives referrals."
+    },
+    {
+      "id": "first-principles-3",
+      "upgrade": "Before building anything, run the willingness-to-pay test on 5 dealers with 3 real packets each. Lock the asset you own (the brand, domain, reviews and seller list), because any dealer can copy the Google Ads once they see them work."
+    },
+    {
+      "id": "marketing-3",
+      "upgrade": "Same copyability problem: own the consumer-facing brand and the seller relationship, and route leads to shops. Don't build each shop its own funnel, or after 90 days the shop owns your work."
+    },
+    {
+      "id": "mindset-1",
+      "upgrade": "Price on performance (a share of incremental contribution margin) instead of a flat retainer. Retainers are priced on human hours, and that price is falling as Amazon's own AI ad tools mature. A performance fee keeps the price tied to the outcome, not the hours."
+    },
+    {
+      "id": "arbitrage-1",
+      "upgrade": "The fee-leak savings are captured once and then the client churns. Lead with the audit, but sell the ongoing work that comes back every week: variant-accurate titles and item specifics, plus repricing."
+    },
+    {
+      "id": "demand-3",
+      "upgrade": "Make the report free and earn on the brokered sale. A paid report fights the 'dealers appraise for free' anchor, and free AI appraisal tools for heirs already exist."
+    }
+  ],
+  "combo": "Supply Desk + Show (one metro, one engine). (1) business-2 funnel: seller-intent Google Ads in the local radius plus national mail-in for vintage only. Claude photo-triages every lead and routes it to buy (at most 55% of liquid value), consign (default for big lots, per leverage-1), refer (flat fee per qualified lead to partner shops or dealers, the first-principles-3 layer) or bulk (into demand-2 Q4 bundles). (2) business-1 monthly show in the same metro, pre-sold to vendors with refundable tables, used as a lead source with no ad cost (a door appraisal booth) and as the exit for mid-tier inventory. (3) Value bands up front and itemized comps only after acceptance, with the cash offer framed as a convenience fee. Test the riskiest guesses first and in parallel: a $1,000 / 21-day ad test on cost per qualified lead (photos plus at least $750 of value; kill above $150-200), and a 15-day table pre-sale (25+ paid tables or refund everyone). Neither test bets on card prices going up.",
+  "message": "Underneath every collection-buyer variant, the 40-60% spread has two halves: an information half and a hassle/liquidity half. Free AI appraisal tools for heirs already exist (HeirLoupe and others), so the information half shrinks every year AI improves. Build on the hassle half and price the cash offer as a convenience fee, not as a discount for what the seller doesn't know. The only number that decides this whole board is cost per qualified lead, and $1,000 of ads answers it in three weeks, so test that before building anything else."
+}
