@@ -1,0 +1,54 @@
+{
+  "seat": "demand",
+  "top3": ["business-2", "business-1", "first-principles-1"],
+  "kills": [
+    {
+      "id": "business-mind-3",
+      "flaw": "Nobody is visibly paying for this today. Collectors already catalog for free or $8-25/mo in Collectr/CollX, no evidence turned up of anyone buying 'heir letters', and the author's own math says it cannot reach $5k/mo within 12 months. It is a float idea with no demand signal behind it."
+    },
+    {
+      "id": "growth-3",
+      "flaw": "As a main bet it misses the mission. It earns $0-500/mo for 9 months, depends on a game that hasn't launched, and makes its money from things nobody pays much for (fan-database ad RPM plus a 3.5% affiliate cut). Piltover-style traffic only shows people will visit, not that they'll pay. At best it is a $0-capital side option, never the move."
+    }
+  ],
+  "upgrades": [
+    {
+      "id": "business-2",
+      "upgrade": "Split the ad budget by who is searching. 'Sell pokemon cards near me' (8,100/mo) is mostly hobby-aware owners of modern cards, and efficient mail-in buylists (Card Conduit, TCGplayer, shops at 50-70%) already serve them. Send those leads to the refer route. Put buy-route money on heir and nostalgia phrasing ('inherited', 'old baseball cards', 'dad's/grandpa's cards', 'worth anything') and on WOTC/vintage terms. Add two intake questions in Mom Test style: 'How did you get these?' and 'Have you had another offer, and how much?' Those answers score seller type and price anchor before anyone calls."
+    },
+    {
+      "id": "business-1",
+      "upgrade": "The vendor pre-sale is already a working fake door, so add a second one for attendees: sell $5 presale tickets with a 'free AI appraisal at the door' slot booking and a 'We Buy Collections' table. Day-15 go/no-go should need 25+ paid tables AND 100+ presold or registered attendees. That is what vendors rebook on. Waitlists (Pasadena 375 tables, Pomona selling out) prove demand at big shows. Claude's calendar map must show a 60-mile, 4-week gap before you commit a venue deposit."
+    },
+    {
+      "id": "first-principles-1",
+      "upgrade": "Treat 'pay 55-65%' as the market price, not as generosity. Mail-in buyers (All Vintage Cards and BaseballCardBuyer at 60-70% within 48h) set the seller's price anchor online. Publish an offer floor plus the comp sheet (marketing-1's 'show the receipts'), and add the consign option for collections bigger than the bankroll. Swap the $1k scanner for phone photos until 3 deals have closed, so the fake door costs only ad spend."
+    },
+    {
+      "id": "business-mind-1",
+      "upgrade": "Add business-2's refer route so junk-wax and kids'-binder leads earn a finder's fee instead of a polite no. Make referral partners (estate companies, move managers) the primary channel by month 3, because their leads come pre-qualified by a real estate event. Paid search is the bootstrap."
+    },
+    {
+      "id": "arbitrage-1",
+      "upgrade": "Fold business-3's Whatnot Boost work into this as an add-on, not a separate desk. Before setting any price, run the free audit on 10 real seller CSVs and publish the median dollars leaked. If the median leak is under $500/mo, a $750 retainer can't be sold, so switch to a $149 one-time audit plus a success fee."
+    },
+    {
+      "id": "mindset-1",
+      "upgrade": "Size the pool before you pitch. Have Claude count US/EU-reachable accessory brands that run Sponsored Brands or video ads on the top 30 keywords. Sales calls should ask what they pay their agency or in-house person today, not whether they'd hire you. If fewer than 40 reachable brands are spending, widen to Shopify card stores running Google/Meta."
+    },
+    {
+      "id": "marketing-3",
+      "upgrade": "Get a shop to pay before you build. Ask 10 shops to prepay $300 for 5 photo-qualified sellers, refundable if they aren't delivered. A shop that won't prepay for free inventory is the answer. Price per lead only after you have seen the shops' real close rates."
+    },
+    {
+      "id": "leverage-2",
+      "upgrade": "Mine the 1-3 star reviews of the top 20 slab-storage and binder ASINs, and build the hero SKU on the most repeated complaint. Fake-door it with a Shopify pre-order page plus a $300 Meta test before committing to an 800-unit order."
+    },
+    {
+      "id": "marketing-2",
+      "upgrade": "Run it buy-on-order only. List 10 named Pokémon on Etsy with real photos of real slabs, and buy each slab after the sale lands. That tests the $99 gift price with almost no inventory. Kill it if Etsy plus $500 of Meta can't produce 20 orders before Dec 10."
+    }
+  ],
+  "combo": "The Three-Exit Collection Desk. Paid search runs on heir and vintage intent, estate-liquidator partners feed in (demand-3, growth-1), and leads also come from a monthly Show Runner table (business-1), which is free and also sells mid-tier cards. Every lead is monetized with business-2's buy, consign or refer routing. Buys are priced on first-principles-1's 55-65% published offer floor, and every lead gets the free comp-sheet report (marketing-1/business-mind-1). Junk-wax and Pokémon bulk becomes no-duplicate Q4 gift bundles (demand-2) instead of a write-off. Everything runs under mindset-2's $8k/90-day bankroll cap and dated kill rule. mindset-1 runs alongside as the zero-capital cash hedge while the desk proves its cost per qualified lead.",
+  "message": "We already know sellers want to sell and buyers want to buy. The demand nobody has measured yet is our cost per qualified heir lead, and $500-1,000 of segmented search answers it in two weeks. Don't price offers off what dealers pay. Online mail-in buyers already pay 60-70%, and that is the anchor sellers will compare us to. Of all the toll-booth ideas, only Show Runner collects cash before it spends any, so it should run its pre-sale this month."
+}
